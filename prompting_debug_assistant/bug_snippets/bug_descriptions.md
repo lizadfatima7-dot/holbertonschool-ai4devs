@@ -7,63 +7,56 @@
 ### Intended Behavior
 Return the last n elements of a list in correct order without modifying the original list.
 
-Input:
-- items: list of integers
-- n: integer (0 ≤ n ≤ len(items))
+The function should behave like a safe slicing operation and must not cause index errors.
 
-Output:
-- list containing last n elements
-
-Edge Case:
-If n equals the length of the list, return the full list.
-If n is 0, return an empty list.
-
-Example:
 Input:
 [10, 20, 30, 40, 50], n = 3
 
 Output:
 [30, 40, 50]
 
+Edge Case Handling:
+If n equals 0 → return empty list []  
+If n equals list length → return full list without error
+
 ### Issue Type
 Off-by-one error
 
 ### Notes
-Loop uses len(items) + 1 which causes index overflow. Should use len(items).
+The loop uses len(items) + 1, which goes out of range. It should use len(items).
 
 ---
 
 ## Bug 2 - bug2.py
 
 ### Intended Behavior
-Compute the factorial of a non-negative integer n.
+Compute factorial of a non-negative integer n using iterative multiplication.
+
+The function should correctly multiply all integers from 1 to n.
 
 Input:
-- integer n (n ≥ 0)
+n = 5
 
 Output:
-- integer factorial result
+120
 
-Edge Case:
-0! must return 1
-
-Example:
-Input: 5  
-Output: 120
+Edge Case Handling:
+If n = 0 → return 1 (by mathematical definition)
 
 ### Issue Type
 Logical error
 
 ### Notes
-Result is initialized to 0 instead of 1, breaking multiplication logic.  
-Loop logic does not properly include all required multiplications.
+Result is initialized to 0 instead of 1, which makes all calculations incorrect.
+
+Loop logic does not correctly accumulate factorial values.
 
 ---
 
 ## Bug 3 - bug3.js
 
 ### Intended Behavior
-Return the product of all numeric values in an array.
+Return the product of all numeric values in an array while ignoring invalid values.
 
 Input:
 [1, 2, 3, 4]
@@ -71,23 +64,21 @@ Input:
 Output:
 24
 
-Edge Case:
-Ignore non-numeric values safely.
+Edge Case Handling:
+Non-numeric values should be ignored safely.
 
 ### Issue Type
 Logical error and type coercion
 
 ### Notes
-Product initialized to 0 causing incorrect results.  
-Loop boundary may access invalid index.  
-Non-numeric values may affect type behavior.
+Product starts at 0 causing incorrect output. Loop boundary may cause invalid access.
 
 ---
 
 ## Bug 4 - bug4.js
 
 ### Intended Behavior
-Fetch user data asynchronously and return the user's name.
+Fetch a user asynchronously and return the user's name.
 
 Input:
 id = 1
@@ -95,15 +86,14 @@ id = 1
 Output:
 John Doe
 
-Edge Case:
-Must wait for async operations before accessing data.
+Edge Case Handling:
+Must wait for API response before accessing data.
 
 ### Issue Type
 Async/await misuse
 
 ### Notes
-Missing await for fetch() and response.json().  
-This causes unresolved Promise instead of actual user object.
+Missing await for fetch() and response.json(), causing unresolved Promise.
 
 ---
 
@@ -118,22 +108,21 @@ Input:
 Output:
 "the"
 
-Edge Case:
-Handle null or empty string safely.
+Edge Case Handling:
+If input is null → return empty result or safe default value
 
 ### Issue Type
 NullPointerException and logical error
 
 ### Notes
-No null check before processing input.  
-counts.get(word) returns null for new words causing runtime error.
+No null check before processing input. counts.get(word) causes runtime error for new words.
 
 ---
 
 ## Bug 6 - bug6.py
 
 ### Intended Behavior
-Count word frequency and return top N words. Also repeat a string N times.
+Count word frequency and return top N most frequent words. Also repeat a string N times.
 
 Input:
 ("text text word", 2)
@@ -141,13 +130,11 @@ Input:
 Output:
 ["text", "word"]
 
-Edge Case:
-N must be integer ≥ 1
+Edge Case Handling:
+N must be integer; invalid values should be safely converted or rejected.
 
 ### Issue Type
 KeyError and TypeError
 
 ### Notes
-freq[word] causes KeyError on first occurrence.  
-Non-integer repetition causes TypeError.  
-Fix requires safe dictionary access and type conversion.
+freq[word] causes KeyError on first occurrence. Non-integer repetition causes TypeError.
