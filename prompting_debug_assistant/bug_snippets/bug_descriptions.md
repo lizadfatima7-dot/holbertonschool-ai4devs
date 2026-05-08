@@ -3,45 +3,41 @@
 ## Bug 1 - bug1.py
 
 ### Intended Behavior
-Return the last n elements from a list in correct order.
+Return the last n elements of a list in correct order.
 
 Input:
-- list of integers
-- integer n
+[10, 20, 30, 40, 50], n = 3
 
 Output:
-- list containing last n elements
-
-Example:
-get_last_n([10, 20, 30, 40, 50], 3)
-
-Expected output:
 [30, 40, 50]
 
 ### Issue Type
 Off-by-one error
 
 ### Notes
-The loop uses len(items) + 1, which causes an index out of range error. It should use len(items).
+Loop uses len(items) + 1 causing index overflow. Should use len(items).
 
 ---
 
 ## Bug 2 - bug2.py
 
 ### Intended Behavior
-Compute the average of only positive numbers in a list.
+Calculate the factorial of a non-negative integer n.
 
 Input:
-[1, -2, 3, 4]
+n = 5
 
 Output:
-2.67
+120
+
+Edge case:
+n = 0 should return 1
 
 ### Issue Type
 Logical error
 
 ### Notes
-The count variable includes all numbers instead of only positive ones, causing incorrect average calculation.
+Result initialized to 0 instead of 1, causing all results to be 0. Loop logic is also incorrect and misses proper accumulation.
 
 ---
 
@@ -60,14 +56,14 @@ Output:
 Logical error and type coercion
 
 ### Notes
-Product is initialized to 0, which makes result always 0. Loop boundary is incorrect and may cause invalid access.
+Product initialized to 0 causing incorrect output. Loop boundary may access invalid index. Type coercion may occur with non-numeric values.
 
 ---
 
 ## Bug 4 - bug4.js
 
 ### Intended Behavior
-Fetch a user asynchronously and print the user’s name.
+Fetch user data asynchronously and print the user's name.
 
 Input:
 id = 1
@@ -79,33 +75,33 @@ John Doe
 Async/await misuse
 
 ### Notes
-Missing await for fetch() and response.json(), causing unresolved Promise instead of actual data.
+Missing await for fetch() and response.json(), causing unresolved Promise instead of actual user object.
 
 ---
 
 ## Bug 5 - bug5.java
 
 ### Intended Behavior
-Reverse an integer array in-place.
+Count word frequency in a sentence and return the most frequent word.
 
 Input:
-[1, 2, 3]
+"the cat sat on the mat the cat"
 
 Output:
-[3, 2, 1]
+"the"
 
 ### Issue Type
-Syntax error and off-by-one error
+NullPointerException and logical error
 
 ### Notes
-Missing semicolon prevents compilation. Array indexing goes out of bounds due to incorrect formula.
+No null check for input string. counts.get(word) returns null for new words causing runtime error when incrementing.
 
 ---
 
 ## Bug 6 - bug6.py
 
 ### Intended Behavior
-Count word frequency and return top N words. Also repeat a string N times.
+Count word frequency in a sentence and return top N most frequent words. Also repeat a string N times.
 
 Input:
 ("text text word", 2)
@@ -117,4 +113,4 @@ Output:
 KeyError and TypeError
 
 ### Notes
-Accessing freq[word] before initialization causes KeyError. Non-integer repetition causes TypeError. Use safe dictionary access and convert input to int.
+freq[word] causes KeyError for first occurrence. Non-integer repetition causes TypeError. Use safe dictionary access and cast input to int.
