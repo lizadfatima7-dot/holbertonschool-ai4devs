@@ -7,58 +7,58 @@ Each snippet contains one or more bugs covering syntax errors, logical errors, r
 
 ## Bug 1 - bug1.py
 
-Intended Behavior: The function get_last_n should accept a list and integer n, then return a new list containing only the last n elements of the original list.
+Intended Behavior: The function get_last_n should accept a list and integer n, then return a new list containing only the last n elements of the original list. For example given [10, 20, 30, 40, 50] and n=3 the expected output is [30, 40, 50].
 
 Issue Type: Off-by-one error.
 
-Notes: The loop uses len(items)+1 as upper bound causing IndexError when n equals len(items). Fix by replacing len(items)+1 with len(items).
+Notes: The loop uses range(start, len(items)+1) which goes one index past the end of the list. On the last iteration items[i] raises IndexError because the index equals len(items). The fix is to change len(items)+1 to len(items) in the range call.
 
 ---
 
 ## Bug 2 - bug2.py
 
-Intended Behavior: The function factorial should accept a non-negative integer n and return its factorial by multiplying all integers from 1 to n inclusively using an iterative loop.
+Intended Behavior: The function factorial should accept a non-negative integer n and return its factorial. For example factorial(5) should return 120 and factorial(0) should return 1.
 
 Issue Type: Logical error.
 
-Notes: result is initialized to 0 instead of 1 making every multiplication produce zero. The loop uses range(1, n) which excludes n itself and the base case misses n == 0. Fix by setting result=1, using range(1, n+1), and adding if n == 0 return 1.
+Notes: result is initialized to 0 instead of 1 so every multiplication produces zero regardless of input. The loop uses range(1, n) which excludes n itself so the last factor is never multiplied. The base case only handles n==1 and misses n==0. Fix by setting result=1, changing range to range(1, n+1), and adding a check that returns 1 when n equals 0.
 
 ---
 
 ## Bug 3 - bug3.js
 
-Intended Behavior: The function average should filter out non-numeric values from an array and return the numeric average of the remaining valid numbers rounded to 2 decimal places.
+Intended Behavior: The function average should accept an array of mixed values, filter out anything that is not a valid number, compute the mean of the remaining numbers, and return it rounded to 2 decimal places as a number. For example average([1, 2, 3, 4, 5]) should return 3.00.
 
 Issue Type: Logical error and type coercion.
 
-Notes: typeof NaN equals number in JavaScript so NaN passes the filter and corrupts the sum. reduce has no initial value causing TypeError on empty arrays. toFixed returns a string not a number. Fix by adding isNaN check, passing 0 as initial value to reduce, and wrapping result in parseFloat.
+Notes: In JavaScript typeof NaN equals number so NaN values pass the filter and corrupt the sum. The reduce call has no initial accumulator value which throws TypeError when the filtered array is empty. The toFixed method returns a string so arithmetic on the result fails silently. Fix by replacing the filter with a check that excludes NaN, adding 0 as the initial value for reduce, and returning parseFloat of the toFixed result.
 
 ---
 
 ## Bug 4 - bug4.js
 
-Intended Behavior: The function getUserNames should asynchronously fetch a list of user objects from a given API URL and return an array of their names converted to uppercase strings.
+Intended Behavior: The function getUserNames should asynchronously fetch a list of user objects from a given URL, extract the name property from each user object, convert each name to uppercase, and return the resulting array of strings.
 
 Issue Type: Missing await in asynchronous code.
 
-Notes: fetch is called without await so response holds an unresolved Promise instead of a Response object. Calling json on a Promise throws TypeError. The call site does not await the function so result is always Promise pending. Fix by adding await before fetch and before response.json and awaiting the function at the call site.
+Notes: The call to fetch is missing await so response is an unresolved Promise object instead of a Response. Calling json on a Promise object throws TypeError immediately. The function call at the bottom is also not awaited so result always holds a pending Promise and the console prints Promise pending instead of names. Fix by adding await before fetch, adding await before response.json, and awaiting the function call at the bottom or using then.
 
 ---
 
 ## Bug 5 - bug5.java
 
-Intended Behavior: The function countWords should count how many times each word appears in a given sentence and mostFrequent should return the word with the highest frequency count from the resulting map.
+Intended Behavior: The function countWords should accept a sentence string, split it into words, count occurrences of each word, and return a map of word to count. The function mostFrequent should accept that map and return the single word with the highest count. For the sentence the cat sat on the mat the cat the expected result is the with count 3.
 
 Issue Type: Runtime NullPointerException and logical error.
 
-Notes: No null check exists for the input sentence so passing null throws NullPointerException immediately. HashMap.get returns null for words not yet in the map causing NullPointerException when adding 1. Fix by adding a null guard at the start, using getOrDefault with default 0 plus 1, and changing >= to >.
+Notes: The function does not check whether sentence is null before calling toLowerCase so a null input throws NullPointerException immediately. Inside the loop HashMap.get returns null for any word not yet in the map and adding 1 to null throws NullPointerException. The comparison using >= in mostFrequent causes non-deterministic results on ties because HashMap iteration order is undefined. Fix by adding a null guard at the top, replacing counts.get(word)+1 with counts.getOrDefault(word, 0)+1, and changing >= to >.
 
 ---
 
 ## Bug 6 - bug6.py
 
-Intended Behavior: The function process_scores should open a CSV file where each row contains a student name followed by a list of numeric scores, compute the numeric average of those scores for each student, and write a new CSV file containing each student name alongside their computed average.
+Intended Behavior: The function process_scores should read a CSV file where each row has a student name in the first column followed by numeric score values in the remaining columns, compute the average of those numeric scores for each student, and write a new CSV file with two columns named Name and Average containing each student name and their computed average.
 
 Issue Type: Runtime TypeError and resource leak.
 
-Notes: CSV row values are read as strings not numbers so scores is expected to contain numeric values but CSV parsing returns strings by default causing sum to raise TypeError. Each score must be converted with float before summing. Both files are opened without a with statement causing resource leaks. The output file is never explicitly closed risking data loss. Fix by converting each score with float and using with open for both files.
+Notes: The csv reader returns all values as strings so scores is a list of strings not numbers. Calling sum on a list of strings raises TypeError because string addition is not numeric addition. Each value must be converted using float before summing. Both files are opened using open without a with statement so if an exception occurs the file handles are never closed causing a resource leak. The output file has no explicit close call so buffered data may never be written to disk. Fix by wrapping each score in float, opening both files using with open, and removing the manual close calls.
