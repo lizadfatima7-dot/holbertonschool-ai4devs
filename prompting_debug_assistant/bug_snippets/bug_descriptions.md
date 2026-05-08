@@ -16,14 +16,14 @@
 ## Bug 4 – bug4.js
 **Intended Behavior**: Fetch a list of users from an API and return their names in uppercase.
 **Issue Type**: Misuse of async/await.
-**Notes**: The fetch call is missing await, so response holds a Promise instead of a Response object. Calling .json() on a Promise throws a TypeError. The result is never awaited at the call site.
+**Notes**: The fetch call is missing await, so response holds a Promise instead of a Response object. Calling .json() on a Promise throws a TypeError, causing the function to crash before any data is processed. The result is never awaited at the call site, so the caller receives a pending Promise instead of the expected array of names.
 
 ## Bug 5 – bug5.java
 **Intended Behavior**: Count word frequencies in a sentence and return the most frequent word.
 **Issue Type**: Runtime NullPointerException and logical error.
-**Notes**: No null check exists for the input sentence. HashMap.get() returns null for unseen words, causing a NullPointerException when adding 1. The >= operator makes tie-breaking non-deterministic across HashMap entries.
+**Notes**: Three distinct issues are present. First, no null check exists for the input sentence, so passing null causes a NullPointerException on .toLowerCase(). Second, HashMap.get() returns null for unseen words, and adding 1 to null throws a NullPointerException, preventing any word count from being built. Third, the >= operator in mostFrequent makes tie-breaking non-deterministic across HashMap entries, so the returned word may vary between runs.
 
 ## Bug 6 – bug6.py
 **Intended Behavior**: Read a CSV of student scores, compute each student's average, and write results to a new CSV file.
 **Issue Type**: Runtime TypeError and resource leak.
-**Notes**: CSV values are strings, so sum() raises a TypeError. Files are opened without a with statement, causing resource leaks if an exception occurs. The output file is never explicitly closed, risking data loss.
+**Notes**: CSV values are strings, so sum() raises a TypeError and no averages are computed. Files are opened without a with statement, causing resource leaks if an exception occurs mid-execution. The output file is never explicitly closed, risking incomplete or corrupted data being written to disk.
