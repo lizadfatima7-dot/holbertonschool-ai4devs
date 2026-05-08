@@ -16,14 +16,14 @@ Output:
 [30, 40, 50]
 
 Edge Case:
-- n = 0 → return []
-- n = len(items) → return full list safely
+- n = 0 → []
+- n = len(items) → full list
 
 ### Issue Type
 Off-by-one error
 
 ### Notes
-Loop uses len(items) + 1 which causes index overflow.
+Loop uses len(items) + 1 causing index overflow.
 
 ---
 
@@ -32,7 +32,7 @@ Loop uses len(items) + 1 which causes index overflow.
 ## Bug 2 - factorial
 
 ### Intended Behavior
-Compute factorial of a non-negative integer using iterative multiplication.
+Compute factorial of a non-negative integer using iteration.
 
 Input:
 n = 5
@@ -41,10 +41,10 @@ Output:
 120
 
 Edge Case:
-- n = 0 → return 1
+- n = 0 → 1
 
 ### Issue Type
-Logical error
+Logical error (incorrect initialization)
 
 ### Notes
 Result initialized to 0 instead of 1, breaking multiplication logic.
@@ -53,25 +53,25 @@ Result initialized to 0 instead of 1, breaking multiplication logic.
 
 # FILE: bug3.js
 
-## Bug 3 - productOfArray
+## Bug 3 - average
 
 ### Intended Behavior
-Return product of all numeric values in an array.
+Compute average of numeric values in an array while ignoring invalid entries.
 
 Input:
-[1, 2, 3, 4]
+[10, "hello", null, 20]
 
 Output:
-24
+15
 
 Edge Case:
-- ignore non-numeric values
+- empty or invalid-only arrays should be handled safely
 
 ### Issue Type
-Logical error and type coercion
+Type filtering error and runtime exception
 
 ### Notes
-Product starts at 0 causing incorrect result. Loop boundary may exceed array length.
+Non-numeric values are not properly filtered, causing incorrect calculations. Reduce without initial value may fail on empty arrays.
 
 ---
 
@@ -80,7 +80,7 @@ Product starts at 0 causing incorrect result. Loop boundary may exceed array len
 ## Bug 4 - printUser
 
 ### Intended Behavior
-Fetch user asynchronously and return user name.
+Fetch user data asynchronously and return the user's name.
 
 Input:
 id = 1
@@ -89,13 +89,13 @@ Output:
 John Doe
 
 Edge Case:
-- must wait for async response before accessing data
+- must wait for async response
 
 ### Issue Type
 Async/await misuse
 
 ### Notes
-Missing await for fetch and JSON parsing causes unresolved Promise.
+Missing await for fetch and JSON parsing leads to unresolved Promise usage.
 
 ---
 
@@ -113,13 +113,13 @@ Output:
 "the"
 
 Edge Case:
-- null input → safe handling required
+- null input must be handled safely
 
 ### Issue Type
 NullPointerException and logical error
 
 ### Notes
-No null check. Map increment fails for new words.
+No null validation. Map increment fails for unseen keys.
 
 ---
 
@@ -129,7 +129,7 @@ No null check. Map increment fails for new words.
 
 ### Intended Behavior
 1. Count word frequency in text  
-2. Return top N words  
+2. Return top N most frequent words  
 3. Repeat string N times
 
 Input:
@@ -145,4 +145,4 @@ Edge Case:
 KeyError and TypeError
 
 ### Notes
-freq[word] causes KeyError. Invalid types cause runtime errors.
+Dictionary access fails for first occurrence. Invalid types cause runtime errors.
