@@ -4,21 +4,22 @@
 
 ### Intended Behavior
 
-The function is intended to return the last `n` elements from a list while preserving their original order.
+Return the last `n` elements of a list in correct order without errors.
 
-For example:
+Example:
 
-```python id="7aj4tm"
+```python
 get_last_n([10, 20, 30, 40, 50], 3)
 ```
 
-should return:
+Expected output:
 
-```python id="w9ub2n"
+```python
 [30, 40, 50]
 ```
 
-The function should also correctly handle edge cases where `n` equals the size of the list.
+Edge case:
+If `n == len(list)`, the function should return the entire list without crashing.
 
 ### Issue Type
 
@@ -26,23 +27,19 @@ Off-by-one error
 
 ### Notes
 
-The loop uses:
+The loop incorrectly uses:
 
-```python id="4bfhzc"
+```python
 range(start, len(items) + 1)
 ```
 
-instead of:
+This goes beyond valid indices and causes `IndexError`.
 
-```python id="dz7f3h"
+Correct approach:
+
+```python
 range(start, len(items))
 ```
-
-This causes the loop to iterate one step beyond the valid index range.
-
-When the loop reaches `len(items)`, the code attempts to access an invalid list index, producing an `IndexError`.
-
-As a result, the function crashes instead of returning the expected list.
 
 ---
 
@@ -50,33 +47,17 @@ As a result, the function crashes instead of returning the expected list.
 
 ### Intended Behavior
 
-The function is intended to calculate the factorial of a non-negative integer.
+Compute factorial of a non-negative integer correctly.
 
-For example:
+Examples:
 
-```python id="kr54hz"
-factorial(5)
+```python
+factorial(5) -> 120
+factorial(0) -> 1
 ```
 
-should return:
-
-```python id="d9k89z"
-120
-```
-
-and:
-
-```python id="jlwm3x"
-factorial(0)
-```
-
-should return:
-
-```python id="a2u5yj"
-1
-```
-
-The function should multiply all integers from `1` through `n` and return the final product.
+Edge case:
+Factorial of 0 must return 1.
 
 ### Issue Type
 
@@ -84,31 +65,17 @@ Logical error
 
 ### Notes
 
-The variable:
-
-```python id="flz2s7"
-result = 0
-```
-
-is incorrect because factorial multiplication must start from `1`.
+`result` is initialized to `0`, which breaks multiplication logic.
 
 The loop:
 
-```python id="7d5ehv"
+```python
 range(1, n)
 ```
 
-does not include the value `n`, so the multiplication is incomplete.
+does not include `n`, so final multiplication step is missing.
 
-The base case only handles:
-
-```python id="sn9j3w"
-n == 1
-```
-
-and ignores the valid factorial case for `0`.
-
-Because of these issues, the function always returns `0` instead of the correct factorial value.
+Also base case only handles `n == 1`, missing `n == 0`.
 
 ---
 
@@ -116,53 +83,34 @@ Because of these issues, the function always returns `0` instead of the correct 
 
 ### Intended Behavior
 
-The function is intended to filter out non-numeric values from an array, calculate the average of the remaining numeric values, and return the result rounded to two decimal places.
+Filter only numeric values, compute average, and return result rounded to 2 decimal places.
 
-For example:
+Example:
 
-```javascript id="bx6l6x"
+```javascript
 average([10, "hello", null, 20])
 ```
 
-should return:
+Expected output:
 
-```javascript id="0w8jlwm"
+```
 15.00
 ```
 
-The function should also safely handle edge cases such as empty arrays or arrays containing invalid numeric values.
+Edge case:
+Empty arrays should not crash and should return a safe value (e.g., 0 or handled error).
 
 ### Issue Type
 
-Runtime exception and data validation error
+Data validation and runtime error
 
 ### Notes
 
-The condition:
+`typeof NaN === "number"` allows invalid values into calculation.
 
-```javascript id="w5q6of"
-typeof n === "number"
-```
+`reduce()` without initial value causes crash on empty arrays.
 
-still allows `NaN`, because JavaScript evaluates:
-
-```javascript id="lhm2xw"
-typeof NaN
-```
-
-as `"number"`.
-
-The `reduce()` function is called without an initial value, causing a `TypeError` when the filtered array is empty.
-
-The method:
-
-```javascript id="vlr41g"
-toFixed(2)
-```
-
-returns a string instead of a numeric value, which may create problems for later calculations.
-
-As a result, the function may crash or return values with incorrect data types.
+`toFixed(2)` returns string instead of number.
 
 ---
 
@@ -170,49 +118,36 @@ As a result, the function may crash or return values with incorrect data types.
 
 ### Intended Behavior
 
-The function is intended to fetch user data from an API endpoint, extract each user's name, convert the names to uppercase, and return them as an array.
+Fetch users from API and return uppercase names as an array.
 
-Example expected output:
+Example:
 
-```javascript id="y8mjlwm"
+```
 ["LEANNE GRAHAM", "ERVIN HOWELL"]
 ```
 
-The function should wait for the API request and JSON parsing to finish before attempting to process the data.
-
-The final console output should display the resolved array rather than a pending Promise object.
+Edge case:
+Function must wait for API response before processing data.
 
 ### Issue Type
 
-Incorrect async handling
+Async/await misuse
 
 ### Notes
 
-The statement:
+Missing `await` in `fetch()`:
 
-```javascript id="9kme8o"
+```javascript
 const response = fetch(url);
 ```
 
-does not use `await`, so `response` becomes a Promise instead of the actual HTTP response.
+Also missing `await` for:
 
-The call to:
-
-```javascript id="ekc12p"
+```javascript
 response.json()
 ```
 
-also requires `await`.
-
-Without awaiting these asynchronous operations, the program attempts to use unresolved Promise objects as real data, causing runtime errors.
-
-Additionally, the result of:
-
-```javascript id="gx4u9x"
-getUserNames(...)
-```
-
-is logged without `await`, so the console displays a pending Promise instead of the completed array.
+This leads to processing unresolved Promise objects instead of actual data.
 
 ---
 
@@ -220,55 +155,34 @@ is logged without `await`, so the console displays a pending Promise instead of 
 
 ### Intended Behavior
 
-The program is intended to count the frequency of each word in a sentence and return the word that appears most often.
+Count word frequency and return the most frequent word.
 
-For example:
+Example:
 
-```java id="8ydh67"
-"the cat sat on the mat the cat"
+```
+"the cat sat on the mat the cat" -> "the"
 ```
 
-should produce:
-
-```java id="uxoqxl"
-"the"
-```
-
-The program should also safely handle invalid input such as `null` values and correctly initialize counts for newly encountered words.
+Edge case:
+Function must handle `null` input safely.
 
 ### Issue Type
 
-NullPointerException and logical error
+NullPointerException and logic error
 
 ### Notes
 
-The method does not verify whether the input sentence is `null`.
+No null check before:
 
-Calling:
-
-```java id="h0g1pt"
+```java
 sentence.toLowerCase()
 ```
 
-when the input is `null` throws a `NullPointerException`.
+This causes crash if input is null.
 
-The expression:
+`counts.get(word) + 1` fails for new words (returns null).
 
-```java id="ux6e1t"
-counts.get(word) + 1
-```
-
-also throws a `NullPointerException` because new words do not yet exist in the map.
-
-The comparison operator:
-
-```java id="tpk2z4"
->=
-```
-
-inside `mostFrequent()` creates inconsistent tie-breaking behavior because later words can replace earlier words with the same frequency.
-
-As a result, the program may crash or produce inconsistent outputs.
+Tie-breaking logic using `>=` causes inconsistent results.
 
 ---
 
@@ -276,42 +190,27 @@ As a result, the program may crash or produce inconsistent outputs.
 
 ### Intended Behavior
 
-The function is intended to read student names and scores from a CSV file, calculate each student's average score, and write the results to another CSV file.
+Read CSV file, compute student averages, and write results to output file.
 
-The output file should contain:
+Expected output:
 
-```python id="8ofc0n"
-["Name", "Average"]
+```
+Name, Average
 ```
 
-Each row should store a student's name together with the calculated numeric average.
-
-The function should also properly close all opened files, even when errors occur during processing.
+Edge case:
+File operations must safely close even if error occurs.
 
 ### Issue Type
 
-Type conversion error and resource leak
+Type conversion error and resource management issue
 
 ### Notes
 
-CSV values are read as strings, but the `sum()` function requires numeric values.
+CSV values are strings but used in `sum()` → causes `TypeError`.
 
-As a result, the statement that calculates the average raises a `TypeError`.
+Values must be converted using `int()` or `float()`.
 
-The scores should first be converted using `int()` or `float()` before arithmetic operations are performed.
+Missing `with open()` causes file leak risk.
 
-The files are opened without using `with` statements:
-
-```python id="r7y1g7"
-open(input_path, "r")
-```
-
-and:
-
-```python id="jlwm8u"
-open(output_path, "w")
-```
-
-If an exception occurs, the files may remain open and system resources may leak.
-
-The output file is also never explicitly closed, which may result in incomplete or corrupted CSV output.
+Output file is not safely closed if error occurs.
