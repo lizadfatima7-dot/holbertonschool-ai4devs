@@ -3,27 +3,28 @@
 ## Bug 1 - bug1.py
 
 ### Intended Behavior
-The function get_last_n should accept a list and integer n, then return a new list containing only the last n elements of the original list.
+Return the last `n` elements of a list in correct order.
 
 ### Issue Type
 Off-by-one error
 
 ### Notes
-The loop uses `len(items) + 1` as the upper bound, which causes an IndexError when `n` equals the length of the list.  
-Fix: replace `len(items) + 1` with `len(items)`.
+The loop uses `len(items) + 1`, which causes index overflow.  
+Fix: use `len(items)`.
 
 ---
 
 ## Bug 2 - bug2.py
 
 ### Intended Behavior
-The function average_positives should calculate the mean of only positive numbers in a list, ignoring zero and negative values.
+Compute the average of only positive numbers in a list, ignoring zero and negative values.
 
 ### Issue Type
 Logical error
 
 ### Notes
-`count` is incorrectly set to `len(numbers)`, which includes invalid values.  
+`count` is incorrectly set to `len(numbers)` instead of counting only positive values.  
+This leads to incorrect averaging results.  
 Fix: increment `count` only when `num > 0`.
 
 ---
@@ -31,17 +32,16 @@ Fix: increment `count` only when `num > 0`.
 ## Bug 3 - bug3.js
 
 ### Intended Behavior
-The function productOfArray should multiply all numbers in an array and return the product.  
-The function sumItems should return the sum of numeric values.
+Multiply all numeric values in an array and return the result.
 
 ### Issue Type
 Logical error and type coercion
 
 ### Notes
-`product` is initialized to `0`, so result is always `0`.  
-Loop uses `<=`, causing out-of-bounds access.  
-Strings cause type coercion issues.  
-Fix: set `product = 1`, use `<`, and ensure numeric conversion.
+`product` starts at `0`, so result is always `0`.  
+Loop uses `<=` causing out-of-bounds access.  
+Strings cause implicit type coercion.  
+Fix: initialize `product = 1`, use `<`, and ensure numeric input.
 
 ---
 
@@ -54,23 +54,23 @@ Fetch a user asynchronously and print the user's name.
 Missing await in async code
 
 ### Notes
-`getUser()` returns a Promise, but `await` is missing.  
-This causes `user.name` to be undefined.  
+`getUser()` returns a Promise but is not awaited.  
+This causes `user` to be unresolved and `user.name` to fail.  
 Fix: use `async/await`.
 
 ---
 
-## Bug 5 - bug5.cpp
+## Bug 5 - bug5.java
 
 ### Intended Behavior
-Reverse an integer array in-place and print it.
+Reverse an integer array in-place and print the reversed array.
 
 ### Issue Type
 Syntax error and off-by-one error
 
 ### Notes
-Missing semicolon breaks compilation.  
-Index `arr[size-i]` is out of bounds.  
+Missing semicolon prevents compilation.  
+Incorrect indexing `arr[size-i]` causes out-of-bounds access.  
 Fix: use `arr[size-1-i]`.
 
 ---
@@ -84,7 +84,6 @@ Count word frequencies and return top N words. Also repeat strings N times.
 Runtime error and type error
 
 ### Notes
-`freq[word] + 1` causes KeyError.  
-Fix: `freq.get(word, 0) + 1`.  
-Float used instead of int causes TypeError.  
-Fix: cast to int.
+`freq[word] + 1` causes KeyError on first occurrence.  
+Float input for repetition causes TypeError.  
+Fix: use `freq.get(word, 0) + 1` and cast `int(times)`.
