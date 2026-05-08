@@ -1,30 +1,38 @@
-$content = @"
-# Bug Analysis Report
-This document describes 6 intentionally buggy code snippets across Python, JavaScript, and Java. Each snippet contains one or more bugs covering off-by-one errors, logical errors, runtime exceptions, and type misuse. The intended behavior, issue type, and detailed notes are provided for each bug.
----
-## Bug 1 - bug1.py
-**Intended Behavior**: The function get_last_n accepts a list of elements and a positive integer n as parameters. It should create and return a new list containing only the last n elements of the original list, preserving their original order. For example, given the list [10, 20, 30, 40, 50] and n=3, the function should return [30, 40, 50].
-**Issue Type**: Off-by-one error.
-**Notes**: The for loop is defined as range(start, len(items)+1) which causes the loop to iterate one step beyond the last valid index. On the final iteration, items[len(items)] is accessed which raises an IndexError because valid indices are 0 to len(items)-1. The fix is to replace len(items)+1 with len(items) so the loop stops at the last valid index.
-## Bug 2 - bug2.py
-**Intended Behavior**: The function factorial accepts a non-negative integer n and returns the factorial of that number, which is the product of all positive integers from 1 to n. For example, factorial(5) should return 120 because 1x2x3x4x5=120. The edge case factorial(0) should return 1 by mathematical convention.
-**Issue Type**: Logical error.
-**Notes**: The variable result is initialized to 0 instead of 1, which means every multiplication in the loop produces 0, making the function always return 0. Additionally the loop is defined as range(1, n) which excludes n itself from the product. Finally there is no handling for the edge case where n equals 0. The fix requires three changes: initialize result to 1, change range(1, n) to range(1, n+1) to include n, and add a condition to return 1 when n equals 0.
-## Bug 3 - bug3.js
-**Intended Behavior**: The function average accepts an array that may contain mixed value types. It should filter out all non-numeric values including NaN, then compute the arithmetic mean of the remaining valid numbers, and return that mean rounded to 2 decimal places as a numeric value not a string. For example, given [1, 2, 3, 4, 5] the function should return the number 3.
-**Issue Type**: Off-by-one error.
-**Notes**: The filter uses typeof n === "number" which incorrectly allows NaN to pass because typeof NaN returns "number" in JavaScript. The reduce call has no initial accumulator value which causes a TypeError when the filtered array is empty. The toFixed method returns a string representation rather than a numeric value. Three fixes are required: add Number.isNaN(n) to the filter condition to exclude NaN values, pass 0 as the initial value to reduce, and wrap the toFixed result with parseFloat to return a number.
-## Bug 4 - bug4.js
-**Intended Behavior**: The asynchronous function getUserNames accepts a URL string as a parameter. It should send an HTTP GET request to that URL, parse the JSON response body into a JavaScript array of user objects, and return a new array containing each user's name property converted to uppercase. For example, given a URL that returns [{name: "Alice"}, {name: "Bob"}] the function should return ["ALICE", "BOB"].
-**Issue Type**: Misuse of data types or libraries.
-**Notes**: The fetch function returns a Promise that resolves to a Response object, but the await keyword is missing before the call. Similarly response.json() returns a Promise that resolves to the parsed data, but await is also missing before that call. As a result the variable data holds an unresolved Promise object and calling map on it throws a TypeError. The fix is to add await before fetch(url) and await before response.json() so that each Promise resolves to its actual value before the next operation runs.
-## Bug 5 - bug5.java
-**Intended Behavior**: The static method countWords accepts a sentence string and returns a HashMap where each key is a word from the sentence and each value is the number of times that word appears. The static method mostFrequent accepts that HashMap and returns the word with the highest frequency count. For example, given the sentence "the cat sat on the mat the cat" countWords should return {the=3, cat=2, sat=1, on=1, mat=1} and mostFrequent should return "the".
-**Issue Type**: Runtime exception.
-**Notes**: When a null value is passed to countWords, calling sentence.toLowerCase().split() immediately throws a NullPointerException because null has no methods. Inside the loop, counts.get(word) returns null for any word that has not been seen before, and adding 1 to null throws a NullPointerException due to failed unboxing. Two fixes are required: add a null check at the start of countWords that returns an empty map when sentence is null, and replace counts.get(word) with counts.getOrDefault(word, 0) so unseen words start at 0 instead of null.
-## Bug 6 - bug6.py
-**Intended Behavior**: The function process_scores accepts an input CSV file path and an output CSV file path. Each row of the input file contains a student name followed by one or more numeric scores. The function should compute the average score for each student and write the results to the output CSV file with two columns: Name and Average. For example, given an input row Alice,85,90,78 the corresponding output row should be Alice,84.33.
-**Issue Type**: Misuse of data types or libraries.
-**Notes**: The csv.reader returns all values as strings, so passing the scores list directly to sum raises a TypeError because Python cannot add string values arithmetically. Additionally both the input and output files are opened using plain open calls without with statements, which means file handles are not guaranteed to close properly if an exception occurs during processing, leading to resource leaks. Two fixes are required: convert each score to a float using float() before passing to sum, and wrap both open calls in with statements to ensure files are closed automatically.
-"@
-[System.IO.File]::WriteAllText("C:\Users\Fatima\OneDrive\Desktop\bug_descriptions.md\prompting_debug_assistant\bug_snippets\bug_descriptions.md", $content, [System.Text.Encoding]::UTF8)
+@"
+import io
+content = (
+'## Bug 1 \u2013 bug1.py\n'
+'**Intended Behavior**: The function get_last_n returns a new list containing only the last n elements of the input list.  \n'
+'**Issue Type**: Off-by-one error.  \n'
+'**Notes**: The loop uses range(start, len(items)+1) causing IndexError when n equals len(items). Fix by replacing len(items)+1 with len(items).\n'
+'\n'
+'## Bug 2 \u2013 bug2.py\n'
+'**Intended Behavior**: The function factorial returns the product of all positive integers from 1 to n, with factorial(0) returning 1.  \n'
+'**Issue Type**: Logical error.  \n'
+'**Notes**: result is initialized to 0 instead of 1 so all products are zero. Loop uses range(1, n) excluding n. Fix by setting result=1, using range(1, n+1), and returning 1 when n equals 0.\n'
+'\n'
+'## Bug 3 \u2013 bug3.js\n'
+'**Intended Behavior**: The function average filters non-numeric values from an array and returns the arithmetic mean of the remaining numbers rounded to 2 decimal places.  \n'
+'**Issue Type**: Off-by-one error.  \n'
+'**Notes**: typeof NaN returns number so NaN passes the filter. reduce has no initial value causing TypeError. toFixed returns a string. Fix by adding Number.isNaN check, passing 0 to reduce, and using parseFloat.\n'
+'\n'
+'## Bug 4 \u2013 bug4.js\n'
+'**Intended Behavior**: The async function getUserNames fetches a JSON array of user objects from a URL and returns each user name converted to uppercase.  \n'
+'**Issue Type**: Misuse of data types or libraries.  \n'
+'**Notes**: fetch and response.json return Promises but neither is awaited so the function maps over unresolved Promises. Fix by adding await before fetch and before response.json.\n'
+'\n'
+'## Bug 5 \u2013 bug5.java\n'
+'**Intended Behavior**: countWords returns a HashMap mapping each word to its frequency. mostFrequent returns the word with the highest count.  \n'
+'**Issue Type**: Runtime exception.  \n'
+'**Notes**: Null input throws NullPointerException on split. HashMap.get returns null for unseen words causing NullPointerException on increment. Fix by adding a null guard and using getOrDefault(word, 0)+1.\n'
+'\n'
+'## Bug 6 \u2013 bug6.py\n'
+'**Intended Behavior**: process_scores reads a CSV of student names and scores, computes each average, and writes a new CSV with Name and Average columns.  \n'
+'**Issue Type**: Misuse of data types or libraries.  \n'
+'**Notes**: CSV values are strings so sum raises TypeError. Files without with blocks cause resource leaks. Fix by converting scores with float() and using with open blocks.\n'
+)
+with open(r'C:\Users\Fatima\OneDrive\Desktop\bug_descriptions.md\prompting_debug_assistant\bug_snippets\bug_descriptions.md', 'w', encoding='utf-8') as f:
+    f.write(content)
+print('Done')
+"@ | Out-File -FilePath "write_bugs.py" -Encoding utf8
+python write_bugs.py
