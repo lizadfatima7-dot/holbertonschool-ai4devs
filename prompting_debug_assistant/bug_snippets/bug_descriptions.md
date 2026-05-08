@@ -7,12 +7,12 @@
 ## BUG 1 - get_last_n
 
 ### Intended Behavior
-The function must return the last n elements of a list in correct order without modifying the original list.
+Function must return the last n elements of a list in correct order.
 
 Specification:
 - Input: list of integers, integer n
-- Output: list containing last n elements
-- Behavior must not raise index errors
+- Output: list of last n elements
+- Must not raise index errors
 
 Input:
 [10, 20, 30, 40, 50], n = 3
@@ -21,14 +21,14 @@ Expected Output:
 [30, 40, 50]
 
 Edge Case Handling:
-- n = 0 → return []
-- n = len(list) → return full list safely
+- n = 0 → []
+- n = len(list) → full list
 
 ### Issue Type
 Off-by-one error
 
 ### Notes
-Loop uses len(items) + 1 causing index overflow.
+Loop exceeds valid index range due to len(items) + 1.
 
 ---
 
@@ -37,11 +37,11 @@ Loop uses len(items) + 1 causing index overflow.
 ## BUG 2 - factorial
 
 ### Intended Behavior
-The function must compute factorial of a non-negative integer using iterative multiplication.
+Function must compute factorial of a non-negative integer using iterative multiplication.
 
 Specification:
 - Input: integer n (n ≥ 0)
-- Output: n! value
+- Output: factorial result
 
 Input:
 n = 5
@@ -50,13 +50,13 @@ Expected Output:
 120
 
 Edge Case Handling:
-- n = 0 → return 1
+- n = 0 → 1
 
 ### Issue Type
 Logical error (incorrect initialization)
 
 ### Notes
-Result initialized to 0 instead of 1, breaking multiplication logic.
+Result initialized to 0 instead of 1 causing invalid multiplication.
 
 ---
 
@@ -65,10 +65,10 @@ Result initialized to 0 instead of 1, breaking multiplication logic.
 ## BUG 3 - average
 
 ### Intended Behavior
-The function must compute the average of numeric values in an array while ignoring invalid entries.
+Function must compute average of numeric values in an array while ignoring invalid entries.
 
 Specification:
-- Input: array of mixed values
+- Input: mixed array
 - Output: numeric average
 
 Input:
@@ -78,13 +78,13 @@ Expected Output:
 15
 
 Edge Case Handling:
-- empty array → must be safely handled
+- empty array → safe handling required
 
 ### Issue Type
 Type filtering error and runtime exception risk
 
 ### Notes
-Non-numeric values are not correctly filtered. Reduce operation may fail on empty arrays.
+Non-numeric values not properly filtered. Reduce may fail on empty arrays.
 
 ---
 
@@ -93,7 +93,7 @@ Non-numeric values are not correctly filtered. Reduce operation may fail on empt
 ## BUG 4 - printUser
 
 ### Intended Behavior
-The function must asynchronously fetch user data by ID and return the user's name.
+Function must fetch user data asynchronously and return username.
 
 Specification:
 - Input: user ID
@@ -106,13 +106,13 @@ Expected Output:
 John Doe
 
 Edge Case Handling:
-- must await API response before processing
+- must await async operations
 
 ### Issue Type
 Async/await misuse
 
 ### Notes
-Missing await for fetch and JSON parsing leads to unresolved Promise usage.
+Missing await in fetch and JSON parsing results in unresolved Promise.
 
 ---
 
@@ -121,7 +121,7 @@ Missing await for fetch and JSON parsing leads to unresolved Promise usage.
 ## BUG 5 - WordCounter
 
 ### Intended Behavior
-The function must count word frequency in a sentence and return the most frequent word.
+Function must return the most frequent word in a sentence.
 
 Specification:
 - Input: string sentence
@@ -134,29 +134,33 @@ Expected Output:
 "the"
 
 Edge Case Handling:
-- null input → safe handling required
+- null input → safe default handling required
 
 ### Issue Type
 NullPointerException and logical error
 
 ### Notes
-No null validation before processing input. Map increment fails for unseen keys.
+No null validation before processing. Map operations fail for new keys.
 
 ---
 
 # FILE: bug6.py
 
-## BUG 6 - top_n_words & multiply_string_times
+## BUG 6 - Multi-function module (top_n_words + multiply_string_times)
 
 ### Intended Behavior
-The system must:
-1. Count word frequency in text
-2. Return top N most frequent words
-3. Repeat string N times safely
+This file contains two functions:
+
+1. top_n_words:
+- Count word frequency in text
+- Return top N most frequent words
+
+2. multiply_string_times:
+- Repeat a string N times
 
 Specification:
-- Input: text, integer N
-- Output: list of top words
+- Input: text + integer N OR string + integer N
+- Output: list or repeated string depending on function
 
 Input:
 ("text text word", 2)
@@ -166,9 +170,10 @@ Expected Output:
 
 Edge Case Handling:
 - N must be integer ≥ 1
+- invalid types must be safely handled
 
 ### Issue Type
 KeyError and TypeError
 
 ### Notes
-Dictionary access fails for first occurrence. Invalid input types cause runtime errors.
+Dictionary access fails on first occurrence. Invalid types cause runtime errors.
