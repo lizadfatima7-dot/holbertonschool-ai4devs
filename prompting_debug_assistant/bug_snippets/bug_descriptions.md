@@ -1,179 +1,35 @@
 # Bug Analysis Report
+This document describes 6 intentionally buggy code snippets across Python, JavaScript, and Java.
+Each snippet contains one or more bugs covering syntax errors, logical errors, runtime exceptions, and type misuse.
 
 ---
 
-# FILE: bug1.py
+## Bug 1 - bug1.py
+**Intended Behavior**: The function get_last_n should accept a list and integer n, then return a new list containing only the last n elements of the original list.
+**Issue Type**: Off-by-one error.
+**Notes**: The loop uses len(items)+1 as upper bound causing IndexError when n equals len(items). Fix by replacing len(items)+1 with len(items).
 
-## BUG 1 - get_last_n
+## Bug 2 - bug2.py
+**Intended Behavior**: The function factorial should accept a non-negative integer and return its factorial value using iterative multiplication.
+**Issue Type**: Logical error.
+**Notes**: result is initialized to 0 instead of 1 making every multiplication zero. The loop range excludes n itself and the base case misses n == 0. Fix by setting result=1, using range(1, n+1), and adding n == 0 case.
 
-### Intended Behavior
-Function must return the last n elements of a list in correct order.
+## Bug 3 - bug3.js
+**Intended Behavior**: The function average should filter non-numeric values from an array and return the numeric average of valid numbers rounded to 2 decimal places.
+**Issue Type**: Logical error and type coercion.
+**Notes**: typeof NaN === "number" allows NaN to pass the filter corrupting the sum. reduce has no initial value causing TypeError on empty arrays. toFixed returns a string not a number. Fix by filtering NaN explicitly, adding initial value 0, and parsing the result.
 
-Specification:
-- Input: list of integers, integer n
-- Output: list of last n elements
-- Must not raise index errors
+## Bug 4 - bug4.js
+**Intended Behavior**: The function getUserNames should asynchronously fetch a list of users from an API and return their names converted to uppercase.
+**Issue Type**: Missing await in asynchronous code.
+**Notes**: fetch and response.json are called without await so both return unresolved Promises. Calling .map on a Promise throws TypeError. Fix by adding await before fetch and before response.json and awaiting the function at the call site.
 
-Input:
-[10, 20, 30, 40, 50], n = 3
+## Bug 5 - bug5.java
+**Intended Behavior**: The function countWords should count word frequencies in a sentence and mostFrequent should return the word that appears most often.
+**Issue Type**: Runtime NullPointerException and logical error.
+**Notes**: No null check exists for the input sentence. HashMap.get returns null for unseen words causing NullPointerException when adding 1. Fix with getOrDefault(word, 0)+1 and add a null guard at the start of countWords.
 
-Expected Output:
-[30, 40, 50]
-
-Edge Case Handling:
-- n = 0 → []
-- n = len(list) → full list
-
-### Issue Type
-Off-by-one error
-
-### Notes
-Loop exceeds valid index range due to len(items) + 1.
-
----
-
-# FILE: bug2.py
-
-## BUG 2 - factorial
-
-### Intended Behavior
-Function must compute factorial of a non-negative integer using iterative multiplication.
-
-Specification:
-- Input: integer n (n ≥ 0)
-- Output: factorial result
-
-Input:
-n = 5
-
-Expected Output:
-120
-
-Edge Case Handling:
-- n = 0 → 1
-
-### Issue Type
-Logical error (incorrect initialization)
-
-### Notes
-Result initialized to 0 instead of 1 causing invalid multiplication.
-
----
-
-# FILE: bug3.js
-
-## BUG 3 - average
-
-### Intended Behavior
-Function must compute average of numeric values in an array while ignoring invalid entries.
-
-Specification:
-- Input: mixed array
-- Output: numeric average
-
-Input:
-[10, "hello", null, 20]
-
-Expected Output:
-15
-
-Edge Case Handling:
-- empty array → safe handling required
-
-### Issue Type
-Type filtering error and runtime exception risk
-
-### Notes
-Non-numeric values not properly filtered. Reduce may fail on empty arrays.
-
----
-
-# FILE: bug4.js
-
-## BUG 4 - printUser
-
-### Intended Behavior
-Function must fetch user data asynchronously and return username.
-
-Specification:
-- Input: user ID
-- Output: string username
-
-Input:
-id = 1
-
-Expected Output:
-John Doe
-
-Edge Case Handling:
-- must await async operations
-
-### Issue Type
-Async/await misuse
-
-### Notes
-Missing await in fetch and JSON parsing results in unresolved Promise.
-
----
-
-# FILE: bug5.java
-
-## BUG 5 - WordCounter
-
-### Intended Behavior
-Function must return the most frequent word in a sentence.
-
-Specification:
-- Input: string sentence
-- Output: most frequent word
-
-Input:
-"the cat sat on the mat the cat"
-
-Expected Output:
-"the"
-
-Edge Case Handling:
-- null input → safe default handling required
-
-### Issue Type
-NullPointerException and logical error
-
-### Notes
-No null validation before processing. Map operations fail for new keys.
-
----
-
-# FILE: bug6.py
-
-## BUG 6 - Multi-function module (top_n_words + multiply_string_times)
-
-### Intended Behavior
-This file contains two functions:
-
-1. top_n_words:
-- Count word frequency in text
-- Return top N most frequent words
-
-2. multiply_string_times:
-- Repeat a string N times
-
-Specification:
-- Input: text + integer N OR string + integer N
-- Output: list or repeated string depending on function
-
-Input:
-("text text word", 2)
-
-Expected Output:
-["text", "word"]
-
-Edge Case Handling:
-- N must be integer ≥ 1
-- invalid types must be safely handled
-
-### Issue Type
-KeyError and TypeError
-
-### Notes
-Dictionary access fails on first occurrence. Invalid types cause runtime errors.
+## Bug 6 - bug6.py
+**Intended Behavior**: The function process_scores should read a CSV file of student scores, compute each student average, and write the results to a new CSV output file.
+**Issue Type**: Runtime TypeError and resource leak.
+**Notes**: CSV values are strings so sum raises TypeError instead of summing numbers. Files are opened without a with statement causing resource leaks on exceptions. Fix by converting scores to float, using with open for both files, and ensuring the output file is properly closed.
