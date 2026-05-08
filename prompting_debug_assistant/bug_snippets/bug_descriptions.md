@@ -1,10 +1,9 @@
-````md
 # Bug Analysis Report
 
 ## Bug 1 - bug1.py
 
 ### Intended Behavior
-Return the last `n` items of a list.
+The function should return the last `n` items from a list.
 
 Example:
 
@@ -34,16 +33,16 @@ instead of:
 range(start, len(items))
 ```
 
-This causes the loop to iterate one index beyond the valid range of the list.
+This causes the loop to iterate one position beyond the valid list indexes.
 
-When `i == len(items)`, the code attempts to access an invalid index, raising an `IndexError`.
+When `i == len(items)`, the code accesses an invalid index and raises an `IndexError`.
 
 ---
 
 ## Bug 2 - bug2.py
 
 ### Intended Behavior
-Compute and return the factorial of a non-negative integer.
+The function should compute and return the factorial of a non-negative integer.
 
 Examples:
 
@@ -58,24 +57,24 @@ Logical error
 ### Notes
 The base case only handles `n == 1`, missing the valid case `n == 0`.
 
-The variable `result` is initialized to `0` instead of `1`, so every multiplication keeps the value at `0`.
+The variable `result` is initialized to `0` instead of `1`, causing all multiplications to remain `0`.
 
-The loop uses:
+The loop:
 
 ```python
 range(1, n)
 ```
 
-which excludes `n` itself from the multiplication.
+does not include `n` itself in the multiplication.
 
-Because of these issues, the function always returns `0` instead of the correct factorial value.
+Because of these issues, the function always returns `0`.
 
 ---
 
 ## Bug 3 - bug3.js
 
 ### Intended Behavior
-Filter non-numeric values from an array and return the numeric average of the remaining values rounded to 2 decimal places.
+The function should filter non-numeric values from an array and return the average of the remaining numeric values rounded to 2 decimal places.
 
 Example:
 
@@ -93,24 +92,30 @@ Expected output:
 Data type misuse and runtime exception
 
 ### Notes
-The filter only checks:
+The condition:
 
 ```javascript
 typeof n === "number"
 ```
 
-which still allows `NaN` because `typeof NaN === "number"` evaluates to `true`.
+still allows `NaN`, because `typeof NaN` is `"number"`.
 
-The `reduce()` call does not provide an initial value, so calling it on an empty array throws a `TypeError`.
+The `reduce()` method is used without an initial value, so calling the function with an empty array throws a `TypeError`.
 
-Additionally, `toFixed(2)` returns a string rather than a number, which may cause problems in later arithmetic operations.
+The method:
+
+```javascript
+toFixed(2)
+```
+
+returns a string instead of a numeric value, which may create issues in later calculations.
 
 ---
 
 ## Bug 4 - bug4.js
 
 ### Intended Behavior
-Fetch a list of users from an API endpoint and return their names in uppercase.
+The function should fetch user data from an API and return an array of uppercase user names.
 
 Example output:
 
@@ -122,7 +127,7 @@ Example output:
 Misuse of async/await
 
 ### Notes
-The `fetch()` call is missing `await`, so `response` becomes a `Promise` instead of the resolved HTTP response object.
+The `fetch()` call is missing `await`.
 
 Incorrect code:
 
@@ -136,18 +141,18 @@ Correct code:
 const response = await fetch(url);
 ```
 
-The `.json()` call also requires `await`.
+The `response.json()` call also requires `await`.
 
-Without awaiting these operations, the code attempts to call `.map()` on unresolved Promise data, causing runtime errors.
+Without awaiting these asynchronous operations, the code attempts to use Promise objects as actual data, causing runtime errors.
 
-The returned result is also not awaited at the call site, so the console prints a pending `Promise` instead of the final array of names.
+Additionally, the returned result is not awaited at the call site, so the console displays a pending Promise instead of the resolved array.
 
 ---
 
 ## Bug 5 - bug5.java
 
 ### Intended Behavior
-Count the frequency of each word in a sentence and return the most frequently occurring word.
+The program should count the frequency of words in a sentence and return the most frequently occurring word.
 
 Example:
 
@@ -165,7 +170,7 @@ Expected output:
 Runtime NullPointerException and logical error
 
 ### Notes
-The function does not check whether the input sentence is `null`.
+The method does not check whether the input sentence is `null`.
 
 Calling:
 
@@ -175,30 +180,28 @@ sentence.toLowerCase()
 
 when `sentence` is `null` throws a `NullPointerException`.
 
-Additionally, `counts.get(word)` returns `null` for words that do not yet exist in the map.
-
-This line:
+The expression:
 
 ```java
 counts.get(word) + 1
 ```
 
-attempts arithmetic with `null`, causing another `NullPointerException`.
+also throws a `NullPointerException` for words that are not yet stored in the map because `counts.get(word)` returns `null`.
 
-The comparison:
+The comparison operator:
 
 ```java
 >=
 ```
 
-inside `mostFrequent()` also creates inconsistent tie-breaking behavior because later words replace earlier ones when frequencies are equal.
+inside `mostFrequent()` creates inconsistent tie-breaking behavior because later words replace earlier words with the same frequency.
 
 ---
 
 ## Bug 6 - bug6.py
 
 ### Intended Behavior
-Read a CSV file of student names and scores, compute each student's average score, and write the results to a new CSV file.
+The function should read student names and scores from a CSV file, calculate each student's average score, and write the results to another CSV file.
 
 Expected output columns:
 
@@ -210,7 +213,7 @@ Expected output columns:
 Runtime TypeError and resource leak
 
 ### Notes
-CSV values are read as strings, but `sum()` requires numeric values.
+CSV values are read as strings, but the `sum()` function requires numeric values.
 
 This causes a `TypeError` during average calculation.
 
@@ -230,5 +233,4 @@ open(output_path, "w")
 
 If an exception occurs, the files may remain open.
 
-The output file is also never explicitly closed, which can result in incomplete or corrupted output data.
-````
+The output file is also never explicitly closed, which can lead to incomplete or corrupted output data.
