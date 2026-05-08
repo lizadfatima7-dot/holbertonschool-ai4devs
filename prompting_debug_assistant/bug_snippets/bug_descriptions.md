@@ -4,9 +4,9 @@
 
 ### Intended Behavior
 
-The function should return the last `n` items from a list without causing an error.
+The function should return the last `n` elements of a list.
 
-Example input:
+Example:
 
 ```python
 get_last_n([10, 20, 30, 40, 50], 3)
@@ -17,8 +17,6 @@ Expected output:
 ```python
 [30, 40, 50]
 ```
-
-The function should also work correctly when `n` is equal to the length of the list.
 
 ### Issue Type
 
@@ -38,9 +36,7 @@ instead of:
 range(start, len(items))
 ```
 
-This causes the loop to iterate one step beyond the final valid index.
-
-When `i == len(items)`, the code accesses an invalid list index and raises an `IndexError`.
+This causes the function to access one index beyond the valid range, producing an `IndexError`.
 
 ---
 
@@ -48,7 +44,7 @@ When `i == len(items)`, the code accesses an invalid list index and raises an `I
 
 ### Intended Behavior
 
-The function should correctly compute the factorial of any non-negative integer.
+The function should compute the factorial of a non-negative integer.
 
 Examples:
 
@@ -58,29 +54,13 @@ factorial(1) -> 1
 factorial(0) -> 1
 ```
 
-The function should multiply all integers from `1` through `n` and return the correct factorial value.
-
 ### Issue Type
 
 Logical error
 
 ### Notes
 
-The base case only checks:
-
-```python
-if n == 1:
-```
-
-and does not handle the valid factorial case for `0`.
-
-The variable:
-
-```python
-result = 0
-```
-
-is incorrect because factorial multiplication must begin with `1`.
+The variable `result` is initialized to `0` instead of `1`, causing all multiplication results to remain `0`.
 
 The loop:
 
@@ -88,9 +68,9 @@ The loop:
 range(1, n)
 ```
 
-does not include `n`, so the final multiplication step is skipped.
+does not include `n` itself.
 
-Because of these issues, the function always returns `0` instead of the correct factorial result.
+The base case also ignores the valid factorial case for `0`.
 
 ---
 
@@ -98,9 +78,9 @@ Because of these issues, the function always returns `0` instead of the correct 
 
 ### Intended Behavior
 
-The function should ignore non-numeric values, calculate the average of valid numeric entries, and return the result rounded to two decimal places.
+The function should remove non-numeric values and calculate the average of valid numbers.
 
-Example input:
+Example:
 
 ```javascript
 average([10, "hello", null, 20])
@@ -112,23 +92,21 @@ Expected output:
 15.00
 ```
 
-The function should also safely handle empty arrays without crashing.
-
 ### Issue Type
 
-Data type misuse and runtime exception
+Runtime exception and data validation error
 
 ### Notes
 
-The filter condition:
+The condition:
 
 ```javascript
 typeof n === "number"
 ```
 
-still allows `NaN`, because `typeof NaN` returns `"number"`.
+still allows `NaN`.
 
-The `reduce()` function is called without an initial value, which causes a `TypeError` when the filtered array is empty.
+The `reduce()` method is called without an initial value, causing a `TypeError` for empty arrays.
 
 The method:
 
@@ -136,7 +114,7 @@ The method:
 toFixed(2)
 ```
 
-returns a string rather than a numeric value, which may create problems in later calculations.
+returns a string instead of a number.
 
 ---
 
@@ -144,7 +122,7 @@ returns a string rather than a numeric value, which may create problems in later
 
 ### Intended Behavior
 
-The function should fetch user data from an API, convert all usernames to uppercase, and return an array of uppercase names.
+The function should fetch users from an API and return their names in uppercase.
 
 Example output:
 
@@ -152,45 +130,29 @@ Example output:
 ["LEANNE GRAHAM", "ERVIN HOWELL"]
 ```
 
-The function should wait for the API response and JSON conversion before processing the data.
-
-The final console output should display the completed array of names instead of a pending Promise.
-
 ### Issue Type
 
-Misuse of async/await
+Incorrect async handling
 
 ### Notes
 
 The `fetch()` call is missing `await`.
 
-Incorrect code:
+Incorrect:
 
 ```javascript
 const response = fetch(url);
 ```
 
-Correct code:
+Correct:
 
 ```javascript
 const response = await fetch(url);
 ```
 
-The following line also requires `await`:
+The `response.json()` call also requires `await`.
 
-```javascript
-response.json()
-```
-
-Without awaiting these asynchronous operations, the code attempts to process unresolved Promise objects as real data.
-
-Additionally, the result of:
-
-```javascript
-getUserNames(...)
-```
-
-is not awaited before printing, so the console displays a pending Promise instead of the resolved array.
+Without awaiting the Promise, the code attempts to process unresolved asynchronous data.
 
 ---
 
@@ -198,9 +160,9 @@ is not awaited before printing, so the console displays a pending Promise instea
 
 ### Intended Behavior
 
-The program should count how many times each word appears in a sentence and return the most frequently occurring word.
+The program should count word frequencies and return the most frequently used word.
 
-Example input:
+Example:
 
 ```java
 "the cat sat on the mat the cat"
@@ -212,25 +174,13 @@ Expected output:
 "the"
 ```
 
-The program should safely handle empty or null input values without throwing exceptions.
-
-The word counting logic should correctly initialize counts for new words before incrementing them.
-
 ### Issue Type
 
-Runtime NullPointerException and logical error
+NullPointerException and logical error
 
 ### Notes
 
 The method does not check whether the input sentence is `null`.
-
-Calling:
-
-```java
-sentence.toLowerCase()
-```
-
-when `sentence` is `null` throws a `NullPointerException`.
 
 The expression:
 
@@ -238,7 +188,7 @@ The expression:
 counts.get(word) + 1
 ```
 
-also throws a `NullPointerException` because `counts.get(word)` returns `null` for words that have not yet been added to the map.
+throws a `NullPointerException` because new words do not yet exist in the map.
 
 The comparison operator:
 
@@ -246,7 +196,7 @@ The comparison operator:
 >=
 ```
 
-inside `mostFrequent()` causes inconsistent tie-breaking behavior because later words replace earlier words when frequencies are equal.
+may also produce inconsistent tie-breaking behavior.
 
 ---
 
@@ -254,7 +204,7 @@ inside `mostFrequent()` causes inconsistent tie-breaking behavior because later 
 
 ### Intended Behavior
 
-The function should read student names and scores from a CSV file, calculate each student's average score, and write the results to a new CSV file.
+The function should read student scores from a CSV file, calculate averages, and write the results to another CSV file.
 
 Expected output columns:
 
@@ -262,36 +212,16 @@ Expected output columns:
 ["Name", "Average"]
 ```
 
-Each output row should contain a student's name and their correctly calculated numeric average.
-
-The function should safely close all opened files after processing, even if an error occurs during execution.
-
 ### Issue Type
 
-Runtime TypeError and resource leak
+Type conversion error and resource leak
 
 ### Notes
 
-CSV values are read as strings, but the `sum()` function only works with numeric values.
+CSV values are read as strings, but `sum()` requires numeric values.
 
-This causes a `TypeError` during average calculation.
+The scores should be converted using `int()` or `float()` before calculating averages.
 
-The score values should be converted using `int()` or `float()` before calling `sum()`.
+The files are opened without `with` statements, so files may remain open if an exception occurs.
 
-The files are opened using:
-
-```python
-open(input_path, "r")
-```
-
-and:
-
-```python
-open(output_path, "w")
-```
-
-without `with` statements.
-
-If an exception occurs, the files may remain open and system resources may leak.
-
-The output file is also never explicitly closed, which may result in incomplete or corrupted output data.
+The output file is also never explicitly closed.
