@@ -1,35 +1,234 @@
-## Bug 1 – bug1.py
+````md
+# Bug Analysis Report
 
-**Intended Behavior**: Return the last n items of a list. For example, `get_last_n([10, 20, 30, 40, 50], 3)` should return `[30, 40, 50]`.
-**Issue Type**: Off-by-one error.
-**Notes**: The loop uses `range(start, len(items) + 1)` instead of `range(start, len(items))`, causing it to iterate one index past the last valid position. This raises an `IndexError` when `n` equals the length of the list, crashing the function instead of returning the expected result.
+## Bug 1 - bug1.py
 
-## Bug 2 – bug2.py
+### Intended Behavior
+Return the last `n` items of a list.
 
-**Intended Behavior**: Compute and return the factorial of a non-negative integer. For example, `factorial(5)` should return `120` and `factorial(0)` should return `1`.
-**Issue Type**: Logical error.
-**Notes**: The base case only handles `n == 1`, missing `n == 0`. The result is initialized to `0` instead of `1`, so all multiplications produce `0`. The loop range excludes `n` itself, meaning the function always returns `0` instead of the correct factorial value.
+Example:
 
-## Bug 3 – bug3.js
+```python
+get_last_n([10, 20, 30, 40, 50], 3)
+```
 
-**Intended Behavior**: Filter non-numeric values from an array and return the numeric average of the remaining values rounded to 2 decimal places. For example, `average([10, "hello", null, 20])` should return `15.00`.
-**Issue Type**: Data type misuse and runtime exception.
-**Notes**: `typeof NaN === "number"` allows `NaN` to pass the filter, corrupting the sum. The `reduce` call has no initial value, causing a `TypeError` on empty arrays instead of a safe fallback. The `toFixed` method returns a string, not a number, breaking any downstream arithmetic that expects a numeric result.
+Expected output:
 
-## Bug 4 – bug4.js
+```python
+[30, 40, 50]
+```
 
-**Intended Behavior**: Fetch a list of users from an API endpoint and return their names in uppercase. For example, the function should return `["LEANNE GRAHAM", "ERVIN HOWELL", ...]` for a valid URL.
-**Issue Type**: Misuse of async/await.
-**Notes**: The `fetch` call is missing `await`, so `response` holds a `Promise` instead of the actual HTTP response. Calling `.json()` on a `Promise` throws a `TypeError`, crashing the function before any data is processed. The result is never awaited at the call site, so the caller receives a pending `Promise` instead of the expected array of names.
+### Issue Type
+Off-by-one error
 
-## Bug 5 – bug5.java
+### Notes
+The loop uses:
 
-**Intended Behavior**: Count the frequency of each word in a sentence and return the most frequently occurring word. For example, given `"the cat sat on the mat the cat"`, the function should return `"the"`.
-**Issue Type**: Runtime NullPointerException and logical error.
-**Notes**: No null check exists for the input sentence, so passing `null` throws a `NullPointerException` on `.toLowerCase()`. `HashMap.get()` returns `null` for unseen words, and adding `1` to `null` throws a `NullPointerException`, preventing the word count from being built. The `>=` operator in `mostFrequent` makes tie-breaking non-deterministic, so the returned word may vary between runs when multiple words share the highest frequency.
+```python
+range(start, len(items) + 1)
+```
 
-## Bug 6 – bug6.py
+instead of:
 
-**Intended Behavior**: Read a CSV file of student names and scores, compute each student's average score, and write the results to a new CSV file with columns `Name` and `Average`.
-**Issue Type**: Runtime TypeError and resource leak.
-**Notes**: CSV values are read as strings, so passing them to `sum()` raises a `TypeError` and halts execution before any output is produced. Files are opened without `with` statements, so neither file is properly closed if an exception occurs. The output file is never explicitly closed on success, risking incomplete or corrupted data being written to disk.
+```python
+range(start, len(items))
+```
+
+This causes the loop to iterate one index beyond the valid range of the list.
+
+When `i == len(items)`, the code attempts to access an invalid index, raising an `IndexError`.
+
+---
+
+## Bug 2 - bug2.py
+
+### Intended Behavior
+Compute and return the factorial of a non-negative integer.
+
+Examples:
+
+```python
+factorial(5) -> 120
+factorial(0) -> 1
+```
+
+### Issue Type
+Logical error
+
+### Notes
+The base case only handles `n == 1`, missing the valid case `n == 0`.
+
+The variable `result` is initialized to `0` instead of `1`, so every multiplication keeps the value at `0`.
+
+The loop uses:
+
+```python
+range(1, n)
+```
+
+which excludes `n` itself from the multiplication.
+
+Because of these issues, the function always returns `0` instead of the correct factorial value.
+
+---
+
+## Bug 3 - bug3.js
+
+### Intended Behavior
+Filter non-numeric values from an array and return the numeric average of the remaining values rounded to 2 decimal places.
+
+Example:
+
+```javascript
+average([10, "hello", null, 20])
+```
+
+Expected output:
+
+```javascript
+15.00
+```
+
+### Issue Type
+Data type misuse and runtime exception
+
+### Notes
+The filter only checks:
+
+```javascript
+typeof n === "number"
+```
+
+which still allows `NaN` because `typeof NaN === "number"` evaluates to `true`.
+
+The `reduce()` call does not provide an initial value, so calling it on an empty array throws a `TypeError`.
+
+Additionally, `toFixed(2)` returns a string rather than a number, which may cause problems in later arithmetic operations.
+
+---
+
+## Bug 4 - bug4.js
+
+### Intended Behavior
+Fetch a list of users from an API endpoint and return their names in uppercase.
+
+Example output:
+
+```javascript
+["LEANNE GRAHAM", "ERVIN HOWELL"]
+```
+
+### Issue Type
+Misuse of async/await
+
+### Notes
+The `fetch()` call is missing `await`, so `response` becomes a `Promise` instead of the resolved HTTP response object.
+
+Incorrect code:
+
+```javascript
+const response = fetch(url);
+```
+
+Correct code:
+
+```javascript
+const response = await fetch(url);
+```
+
+The `.json()` call also requires `await`.
+
+Without awaiting these operations, the code attempts to call `.map()` on unresolved Promise data, causing runtime errors.
+
+The returned result is also not awaited at the call site, so the console prints a pending `Promise` instead of the final array of names.
+
+---
+
+## Bug 5 - bug5.java
+
+### Intended Behavior
+Count the frequency of each word in a sentence and return the most frequently occurring word.
+
+Example:
+
+```java
+"the cat sat on the mat the cat"
+```
+
+Expected output:
+
+```java
+"the"
+```
+
+### Issue Type
+Runtime NullPointerException and logical error
+
+### Notes
+The function does not check whether the input sentence is `null`.
+
+Calling:
+
+```java
+sentence.toLowerCase()
+```
+
+when `sentence` is `null` throws a `NullPointerException`.
+
+Additionally, `counts.get(word)` returns `null` for words that do not yet exist in the map.
+
+This line:
+
+```java
+counts.get(word) + 1
+```
+
+attempts arithmetic with `null`, causing another `NullPointerException`.
+
+The comparison:
+
+```java
+>=
+```
+
+inside `mostFrequent()` also creates inconsistent tie-breaking behavior because later words replace earlier ones when frequencies are equal.
+
+---
+
+## Bug 6 - bug6.py
+
+### Intended Behavior
+Read a CSV file of student names and scores, compute each student's average score, and write the results to a new CSV file.
+
+Expected output columns:
+
+```python
+["Name", "Average"]
+```
+
+### Issue Type
+Runtime TypeError and resource leak
+
+### Notes
+CSV values are read as strings, but `sum()` requires numeric values.
+
+This causes a `TypeError` during average calculation.
+
+The scores should be converted using `int()` or `float()` before summation.
+
+The files are opened without `with` statements:
+
+```python
+open(input_path, "r")
+```
+
+and
+
+```python
+open(output_path, "w")
+```
+
+If an exception occurs, the files may remain open.
+
+The output file is also never explicitly closed, which can result in incomplete or corrupted output data.
+````
