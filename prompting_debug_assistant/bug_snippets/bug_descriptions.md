@@ -1,69 +1,174 @@
-$lines = @(
-    "# Bug Analysis Report",
-    "",
-    "This document describes 6 intentionally buggy code snippets across Python, JavaScript, and Java.",
-    "Each snippet contains one or more bugs covering syntax errors, logical errors, runtime exceptions, and type misuse.",
-    "",
-    "---",
-    "",
-    "## Bug 1 - bug1.py",
-    "",
-    "**Intended Behavior**: ``get_last_n`` accepts a list and an integer ``n`` and returns a new list containing only the last ``n`` elements of the original list.",
-    "",
-    "**Issue Type**: Off-by-one error.",
-    "",
-    "**Notes**: The loop uses ``len(items)+1`` as the upper bound, causing an ``IndexError`` when ``n`` equals ``len(items)``. Fix by replacing ``len(items)+1`` with ``len(items)``.",
-    "",
-    "---",
-    "",
-    "## Bug 2 - bug2.py",
-    "",
-    "**Intended Behavior**: ``factorial`` accepts a non-negative integer ``n`` and returns its factorial using an iterative approach. For ``n=5`` it returns ``120``; for ``n=0`` it returns ``1``.",
-    "",
-    "**Issue Type**: Logical error (incorrect initialization).",
-    "",
-    "**Notes**: ``result`` is initialized to ``0`` instead of ``1``, causing all multiplication to produce ``0``. ``range(1, n)`` excludes ``n`` itself, and there is no base case for ``n=0``. Fix by setting ``result=1``, using ``range(1, n+1)``, and adding ``if n == 0: return 1``.",
-    "",
-    "---",
-    "",
-    "## Bug 3 - bug3.js",
-    "",
-    "**Intended Behavior**: ``average`` accepts an array and returns the mean of all numeric values as a string with two decimal places, ignoring non-numeric entries. For ``[10, 'hello', null, 20]`` it returns ``'15.00'``. An empty or fully invalid array is handled without throwing.",
-    "",
-    "**Issue Type**: Type filtering error and runtime exception.",
-    "",
-    "**Notes**: ``reduce`` is called without an initial value, causing a ``TypeError`` on an empty array. When ``valid`` is empty, ``0 / 0`` produces ``NaN``. Fix by passing ``0`` as the initial accumulator and returning ``'0.00'`` when ``valid.length === 0``.",
-    "",
-    "---",
-    "",
-    "## Bug 4 - bug4.js",
-    "",
-    "**Intended Behavior**: ``getUserNames`` asynchronously fetches a list of user objects from a given URL and returns an array of each user's name converted to uppercase, for example ``['LEANNE GRAHAM', 'ERVIN HOWELL', ...]``.",
-    "",
-    "**Issue Type**: Missing ``await`` in asynchronous code.",
-    "",
-    "**Notes**: ``fetch(url)`` and ``response.json()`` are called without ``await``, so both variables hold unresolved ``Promise`` objects. Calling ``.map()`` on a ``Promise`` throws a ``TypeError``. The function is also called without ``.then()``, so a ``Promise`` is printed instead of the names. Fix by adding ``await`` before both calls and attaching ``.then()`` at the call site.",
-    "",
-    "---",
-    "",
-    "## Bug 5 - bug5.java",
-    "",
-    "**Intended Behavior**: ``countWords`` accepts a sentence string and returns a ``Map`` containing each word and its frequency. ``mostFrequent`` accepts that map and returns the word with the highest count. For ``'the cat sat on the mat the cat'`` the result is ``'the'``.",
-    "",
-    "**Issue Type**: NullPointerException and logic error.",
-    "",
-    "**Notes**: ``counts.get(word)`` returns ``null`` on the first occurrence of any word, so ``counts.get(word) + 1`` throws a ``NullPointerException``. ``mostFrequent`` uses ``>= max`` instead of ``> max``, which can overwrite the correct answer with a later equal-frequency word. Fix by using ``counts.getOrDefault(word, 0) + 1`` and changing ``>= max`` to ``> max``.",
-    "",
-    "---",
-    "",
-    "## Bug 6 - bug6.py",
-    "",
-    "**Intended Behavior**: ``process_scores`` reads a CSV file where each row contains a student name followed by numeric scores, computes the average score per student, and writes the results to an output CSV file with columns ``Name`` and ``Average``.",
-    "",
-    "**Issue Type**: Type error and resource leak.",
-    "",
-    "**Notes**: ``scores`` holds raw strings from ``csv.reader``, so ``sum(scores)`` raises a ``TypeError`` because strings cannot be summed. Files are opened without ``with`` blocks, so handles are never closed if an exception occurs. Fix by converting each score with ``float()`` before summing and wrapping both file operations in ``with`` statements."
-)
+# Bug Analysis Report
 
-$path = "D:\bug_descriptions.md\prompting_debug_assistant\bug_snippets\bug_descriptions.md"
-[System.IO.File]::WriteAllLines($path, $lines, [System.Text.Encoding]::UTF8)
+---
+
+# FILE: bug1.py
+
+## BUG 1 - get_last_n
+
+### Intended Behavior
+The function must return the last n elements of a list in correct order without modifying the original list.
+
+Specification:
+- Input: list of integers, integer n
+- Output: list containing last n elements
+- Behavior must not raise index errors
+
+Input:
+[10, 20, 30, 40, 50], n = 3
+
+Expected Output:
+[30, 40, 50]
+
+Edge Case Handling:
+- n = 0 → return []
+- n = len(list) → return full list safely
+
+### Issue Type
+Off-by-one error
+
+### Notes
+Loop uses len(items) + 1 causing index overflow.
+
+---
+
+# FILE: bug2.py
+
+## BUG 2 - factorial
+
+### Intended Behavior
+The function must compute factorial of a non-negative integer using iterative multiplication.
+
+Specification:
+- Input: integer n (n ≥ 0)
+- Output: n! value
+
+Input:
+n = 5
+
+Expected Output:
+120
+
+Edge Case Handling:
+- n = 0 → return 1
+
+### Issue Type
+Logical error (incorrect initialization)
+
+### Notes
+Result initialized to 0 instead of 1, breaking multiplication logic.
+
+---
+
+# FILE: bug3.js
+
+## BUG 3 - average
+
+### Intended Behavior
+The function must compute the average of numeric values in an array while ignoring invalid entries.
+
+Specification:
+- Input: array of mixed values
+- Output: numeric average
+
+Input:
+[10, "hello", null, 20]
+
+Expected Output:
+15
+
+Edge Case Handling:
+- empty array → must be safely handled
+
+### Issue Type
+Type filtering error and runtime exception risk
+
+### Notes
+Non-numeric values are not correctly filtered. Reduce operation may fail on empty arrays.
+
+---
+
+# FILE: bug4.js
+
+## BUG 4 - printUser
+
+### Intended Behavior
+The function must asynchronously fetch user data by ID and return the user's name.
+
+Specification:
+- Input: user ID
+- Output: string username
+
+Input:
+id = 1
+
+Expected Output:
+John Doe
+
+Edge Case Handling:
+- must await API response before processing
+
+### Issue Type
+Async/await misuse
+
+### Notes
+Missing await for fetch and JSON parsing leads to unresolved Promise usage.
+
+---
+
+# FILE: bug5.java
+
+## BUG 5 - WordCounter
+
+### Intended Behavior
+The function must count word frequency in a sentence and return the most frequent word.
+
+Specification:
+- Input: string sentence
+- Output: most frequent word
+
+Input:
+"the cat sat on the mat the cat"
+
+Expected Output:
+"the"
+
+Edge Case Handling:
+- null input → safe handling required
+
+### Issue Type
+NullPointerException and logical error
+
+### Notes
+No null validation before processing input. Map increment fails for unseen keys.
+
+---
+
+# FILE: bug6.py
+
+## BUG 6 - top_n_words & multiply_string_times
+
+### Intended Behavior
+The system must:
+1. Count word frequency in text
+2. Return top N most frequent words
+3. Repeat string N times safely
+
+Specification:
+- Input: text, integer N
+- Output: list of top words
+
+Input:
+("text text word", 2)
+
+Expected Output:
+["text", "word"]
+
+Edge Case Handling:
+- N must be integer ≥ 1
+
+### Issue Type
+KeyError and TypeError
+
+### Notes
+Dictionary access fails for first occurrence. Invalid input types cause runtime errors.
