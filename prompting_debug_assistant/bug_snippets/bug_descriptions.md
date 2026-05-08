@@ -3,214 +3,88 @@
 ## Bug 1 - bug1.py
 
 ### Intended Behavior
-
-Return the last `n` elements of a list in correct order without errors.
-
-Example:
-
-```python
-get_last_n([10, 20, 30, 40, 50], 3)
-```
-
-Expected output:
-
-```python
-[30, 40, 50]
-```
-
-Edge case:
-If `n == len(list)`, the function should return the entire list without crashing.
+The function get_last_n should accept a list and integer n, then return a new list containing only the last n elements of the original list.
 
 ### Issue Type
-
 Off-by-one error
 
 ### Notes
-
-The loop incorrectly uses:
-
-```python
-range(start, len(items) + 1)
-```
-
-This goes beyond valid indices and causes `IndexError`.
-
-Correct approach:
-
-```python
-range(start, len(items))
-```
+The loop uses `len(items) + 1` as the upper bound, which causes an IndexError when `n` equals the length of the list.  
+Fix: replace `len(items) + 1` with `len(items)`.
 
 ---
 
 ## Bug 2 - bug2.py
 
 ### Intended Behavior
-
-Compute factorial of a non-negative integer correctly.
-
-Examples:
-
-```python
-factorial(5) -> 120
-factorial(0) -> 1
-```
-
-Edge case:
-Factorial of 0 must return 1.
+The function average_positives should calculate the mean of only positive numbers in a list, ignoring zero and negative values.
 
 ### Issue Type
-
 Logical error
 
 ### Notes
-
-`result` is initialized to `0`, which breaks multiplication logic.
-
-The loop:
-
-```python
-range(1, n)
-```
-
-does not include `n`, so final multiplication step is missing.
-
-Also base case only handles `n == 1`, missing `n == 0`.
+`count` is incorrectly set to `len(numbers)`, which includes invalid values.  
+Fix: increment `count` only when `num > 0`.
 
 ---
 
 ## Bug 3 - bug3.js
 
 ### Intended Behavior
-
-Filter only numeric values, compute average, and return result rounded to 2 decimal places.
-
-Example:
-
-```javascript
-average([10, "hello", null, 20])
-```
-
-Expected output:
-
-```
-15.00
-```
-
-Edge case:
-Empty arrays should not crash and should return a safe value (e.g., 0 or handled error).
+The function productOfArray should multiply all numbers in an array and return the product.  
+The function sumItems should return the sum of numeric values.
 
 ### Issue Type
-
-Data validation and runtime error
+Logical error and type coercion
 
 ### Notes
-
-`typeof NaN === "number"` allows invalid values into calculation.
-
-`reduce()` without initial value causes crash on empty arrays.
-
-`toFixed(2)` returns string instead of number.
+`product` is initialized to `0`, so result is always `0`.  
+Loop uses `<=`, causing out-of-bounds access.  
+Strings cause type coercion issues.  
+Fix: set `product = 1`, use `<`, and ensure numeric conversion.
 
 ---
 
 ## Bug 4 - bug4.js
 
 ### Intended Behavior
-
-Fetch users from API and return uppercase names as an array.
-
-Example:
-
-```
-["LEANNE GRAHAM", "ERVIN HOWELL"]
-```
-
-Edge case:
-Function must wait for API response before processing data.
+Fetch a user asynchronously and print the user's name.
 
 ### Issue Type
-
-Async/await misuse
+Missing await in async code
 
 ### Notes
-
-Missing `await` in `fetch()`:
-
-```javascript
-const response = fetch(url);
-```
-
-Also missing `await` for:
-
-```javascript
-response.json()
-```
-
-This leads to processing unresolved Promise objects instead of actual data.
+`getUser()` returns a Promise, but `await` is missing.  
+This causes `user.name` to be undefined.  
+Fix: use `async/await`.
 
 ---
 
-## Bug 5 - bug5.java
+## Bug 5 - bug5.cpp
 
 ### Intended Behavior
-
-Count word frequency and return the most frequent word.
-
-Example:
-
-```
-"the cat sat on the mat the cat" -> "the"
-```
-
-Edge case:
-Function must handle `null` input safely.
+Reverse an integer array in-place and print it.
 
 ### Issue Type
-
-NullPointerException and logic error
+Syntax error and off-by-one error
 
 ### Notes
-
-No null check before:
-
-```java
-sentence.toLowerCase()
-```
-
-This causes crash if input is null.
-
-`counts.get(word) + 1` fails for new words (returns null).
-
-Tie-breaking logic using `>=` causes inconsistent results.
+Missing semicolon breaks compilation.  
+Index `arr[size-i]` is out of bounds.  
+Fix: use `arr[size-1-i]`.
 
 ---
 
 ## Bug 6 - bug6.py
 
 ### Intended Behavior
-
-Read CSV file, compute student averages, and write results to output file.
-
-Expected output:
-
-```
-Name, Average
-```
-
-Edge case:
-File operations must safely close even if error occurs.
+Count word frequencies and return top N words. Also repeat strings N times.
 
 ### Issue Type
-
-Type conversion error and resource management issue
+Runtime error and type error
 
 ### Notes
-
-CSV values are strings but used in `sum()` → causes `TypeError`.
-
-Values must be converted using `int()` or `float()`.
-
-Missing `with open()` causes file leak risk.
-
-Output file is not safely closed if error occurs.
+`freq[word] + 1` causes KeyError.  
+Fix: `freq.get(word, 0) + 1`.  
+Float used instead of int causes TypeError.  
+Fix: cast to int.
