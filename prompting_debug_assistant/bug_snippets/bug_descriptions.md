@@ -3,7 +3,7 @@
 ## Bug 1 - bug1.py
 
 ### Intended Behavior
-The function should return the last `n` items from a list.
+The function should return the last `n` elements from a list.
 
 Example:
 
@@ -33,16 +33,16 @@ instead of:
 range(start, len(items))
 ```
 
-This causes the loop to iterate one position beyond the valid list indexes.
+This causes the loop to iterate one step beyond the valid list indexes.
 
-When `i == len(items)`, the code accesses an invalid index and raises an `IndexError`.
+When `i` becomes equal to `len(items)`, the function attempts to access an invalid index and raises an `IndexError`.
 
 ---
 
 ## Bug 2 - bug2.py
 
 ### Intended Behavior
-The function should compute and return the factorial of a non-negative integer.
+The function should calculate and return the factorial of a non-negative integer.
 
 Examples:
 
@@ -55,9 +55,15 @@ factorial(0) -> 1
 Logical error
 
 ### Notes
-The base case only handles `n == 1`, missing the valid case `n == 0`.
+The base case only handles `n == 1` and ignores the valid case `n == 0`.
 
-The variable `result` is initialized to `0` instead of `1`, causing all multiplications to remain `0`.
+The variable:
+
+```python
+result = 0
+```
+
+is incorrect because factorial multiplication must start from `1`.
 
 The loop:
 
@@ -65,16 +71,16 @@ The loop:
 range(1, n)
 ```
 
-does not include `n` itself in the multiplication.
+also excludes `n` from the multiplication.
 
-Because of these issues, the function always returns `0`.
+Because of these problems, the function always returns `0` instead of the correct factorial value.
 
 ---
 
 ## Bug 3 - bug3.js
 
 ### Intended Behavior
-The function should filter non-numeric values from an array and return the average of the remaining numeric values rounded to 2 decimal places.
+The function should remove non-numeric values from an array and return the average of the remaining numeric values rounded to two decimal places.
 
 Example:
 
@@ -92,15 +98,15 @@ Expected output:
 Data type misuse and runtime exception
 
 ### Notes
-The condition:
+The filter condition:
 
 ```javascript
 typeof n === "number"
 ```
 
-still allows `NaN`, because `typeof NaN` is `"number"`.
+still allows `NaN`, because `typeof NaN` returns `"number"`.
 
-The `reduce()` method is used without an initial value, so calling the function with an empty array throws a `TypeError`.
+The `reduce()` function is called without an initial value, which causes a `TypeError` when the array is empty.
 
 The method:
 
@@ -108,20 +114,22 @@ The method:
 toFixed(2)
 ```
 
-returns a string instead of a numeric value, which may create issues in later calculations.
+returns a string instead of a numeric value, which may create problems for later arithmetic operations.
 
 ---
 
 ## Bug 4 - bug4.js
 
 ### Intended Behavior
-The function should fetch user data from an API and return an array of uppercase user names.
+The function should fetch user data from an API endpoint, convert each username to uppercase, and return an array of uppercase names.
 
-Example output:
+Example:
 
 ```javascript
 ["LEANNE GRAHAM", "ERVIN HOWELL"]
 ```
+
+The final console output should display the resolved array of names instead of a pending Promise.
 
 ### Issue Type
 Misuse of async/await
@@ -141,20 +149,32 @@ Correct code:
 const response = await fetch(url);
 ```
 
-The `response.json()` call also requires `await`.
+The call to:
 
-Without awaiting these asynchronous operations, the code attempts to use Promise objects as actual data, causing runtime errors.
+```javascript
+response.json()
+```
 
-Additionally, the returned result is not awaited at the call site, so the console displays a pending Promise instead of the resolved array.
+also requires `await`.
+
+Without awaiting these asynchronous operations, the code attempts to use unresolved Promise objects as actual data.
+
+Additionally, the function call:
+
+```javascript
+getUserNames(...)
+```
+
+is not awaited before logging the result, so the console displays a pending Promise instead of the final array.
 
 ---
 
 ## Bug 5 - bug5.java
 
 ### Intended Behavior
-The program should count the frequency of words in a sentence and return the most frequently occurring word.
+The program should count how many times each word appears in a sentence and return the most frequently occurring word.
 
-Example:
+Example input:
 
 ```java
 "the cat sat on the mat the cat"
@@ -165,6 +185,8 @@ Expected output:
 ```java
 "the"
 ```
+
+The program should also safely handle invalid input such as `null` values without crashing.
 
 ### Issue Type
 Runtime NullPointerException and logical error
@@ -186,7 +208,7 @@ The expression:
 counts.get(word) + 1
 ```
 
-also throws a `NullPointerException` for words that are not yet stored in the map because `counts.get(word)` returns `null`.
+also causes a `NullPointerException` because `counts.get(word)` returns `null` for unseen words.
 
 The comparison operator:
 
@@ -201,7 +223,7 @@ inside `mostFrequent()` creates inconsistent tie-breaking behavior because later
 ## Bug 6 - bug6.py
 
 ### Intended Behavior
-The function should read student names and scores from a CSV file, calculate each student's average score, and write the results to another CSV file.
+The function should read student names and scores from a CSV file, calculate the average score for each student, and write the results to a new CSV file.
 
 Expected output columns:
 
@@ -209,17 +231,21 @@ Expected output columns:
 ["Name", "Average"]
 ```
 
+Each row in the output file should contain a student's name and their calculated numeric average.
+
+The program should properly close all files after processing, even if an error occurs.
+
 ### Issue Type
 Runtime TypeError and resource leak
 
 ### Notes
-CSV values are read as strings, but the `sum()` function requires numeric values.
+CSV values are read as strings, but the `sum()` function only works with numeric values.
 
 This causes a `TypeError` during average calculation.
 
-The scores should be converted using `int()` or `float()` before summation.
+The scores should be converted using `int()` or `float()` before calling `sum()`.
 
-The files are opened without `with` statements:
+The files are opened without using `with` statements:
 
 ```python
 open(input_path, "r")
@@ -231,6 +257,6 @@ and
 open(output_path, "w")
 ```
 
-If an exception occurs, the files may remain open.
+If an exception occurs, the files may remain open and resources may leak.
 
-The output file is also never explicitly closed, which can lead to incomplete or corrupted output data.
+The output file is also never explicitly closed, which may result in incomplete or corrupted output data.
