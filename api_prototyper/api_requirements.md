@@ -1,40 +1,43 @@
-# API Requirements – EduTrack API
+# API Requirements - TaskMaster API
 
 ## Domain
-Academic management platform for students and teachers to manage assignments, grades, attendance, and AI-powered study plans.
+AI-powered project and task management platform that allows developers and team leads to create, assign, track, and manage tasks and projects through a RESTful API.
 
 ## Target Users
-- **Students**: Access assignments, view grades, and retrieve personalized study plans.
-- **Teachers**: Create assignments, update grades, and manage attendance records.
-- **Admins**: Manage user accounts and generate institutional reports.
+- **Developers**: create and manage personal tasks, update task status, and track daily progress through API integrations.
+- **Team Leads**: assign tasks to team members, monitor project progress, and generate reports through automated workflows.
 
 ## Core Operations
-1.  **Register User**: Create a new account for a student or teacher.
-2.  **User Login**: Authenticate user and return a JWT token.
-3.  **Create Assignment**: Add a new assignment to a specific class (Teacher).
-4.  **Get Assignments**: List all assignments for a class or student.
-5.  **Submit Assignment**: Upload or link completed work (Student).
-6.  **Update Grade**: Assign or edit a numerical grade for a submission (Teacher).
-7.  **Get Student Grades**: Retrieve a comprehensive list of grades for a user.
-8.  **Mark Attendance**: Record student presence for a class session (Teacher).
-9.  **Get Attendance Records**: Filter attendance by student or date range.
-10. **Generate AI Study Plan**: Create a personalized study guide based on performance.
-11. **Get Performance Summary**: Retrieve student GPA and academic analytics.
-12. **Delete Assignment**: Remove an assignment from the database (Teacher/Admin).
+1. Create a new task with title, description, deadline, priority, and assignee
+2. Get a task by ID
+3. Update task details including status, priority, and assignee
+4. Delete a task by ID
+5. List all tasks with optional filters by status, priority, and assignee
+6. Create a new project with name, description, and deadline
+7. Get a project by ID with all associated tasks
+8. Update project details
+9. Delete a project by ID
+10. List all projects with optional filters by status and owner
+11. Assign a task to a team member by user ID
+12. Get all tasks assigned to a specific user
+13. Update task status from To Do to In Progress or Done
+14. Search tasks by keyword in title or description
 
 ## Data Rules
-- **Email**: Must be unique and follow a valid email format.
-- **Password**: Minimum 8 characters, including at least one uppercase letter and one number.
-- **Grades**: Must be a numeric value between 0 and 100.
-- **Dates**: Assignment due dates must be set in the future.
-- **Attendance Status**: Must be one of the following: `present`, `absent`, or `late`.
-- **Validation**: Student and Class IDs must exist before creating assignment records.
-- **AI Logic**: An AI study plan requires at least 3 graded assignments to be generated.
+- Task title must not be empty and must be between 3 and 100 characters
+- Task priority must be one of: low, medium, high, or critical
+- Task status must be one of: todo, in_progress, or done
+- Deadline must be a valid ISO 8601 date and must not be in the past
+- Project name must be unique per user account
+- User ID must reference an existing user in the system
+- Description field is optional but must not exceed 1000 characters
+- Assignee must be a valid registered user
 
 ## Non-Functional
-- **Latency**: All endpoints must respond in under 300ms under normal load.
-- **Security**: JWT authentication required for all endpoints except register and login.
-- **Encryption**: Passwords must be hashed using bcrypt before storage.
-- **Rate Limiting**: Maximum of 100 requests per minute per user.
-- **Protocol**: All data must be transmitted over HTTPS.
-- **Versioning**: API versioning must be handled via URL prefix (e.g., `/api/v1/`).
+- Response time must be under 200ms for all read operations
+- JWT authentication required for all endpoints
+- Rate limiting of 100 requests per minute per authenticated user
+- API must support pagination for list endpoints with default page size of 20
+- All responses must return JSON format with consistent error structure
+- API versioning required using URL prefix such as /api/v1
+- HTTPS required for all endpoints in production
