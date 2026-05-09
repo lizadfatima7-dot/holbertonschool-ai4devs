@@ -19,7 +19,7 @@ legacy by modern web development standards.
 - Bootstrap 2.3.2 (outdated major version, incompatible with modern browsers)
 - PDO with no query parameterization in several modules
 
-## Known Issues and Pain Points
+## Issues
 
 ### Architecture
 - No MVC pattern; business logic mixed directly inside HTML template files
