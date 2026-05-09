@@ -1,3 +1,4 @@
+[System.IO.File]::WriteAllText("$base\bug5_fixed.java", @"
 import java.util.HashMap;
 import java.util.Map;
 
@@ -5,7 +6,7 @@ public class WordCounter {
     public static Map<String, Integer> countWords(String sentence) {
         if (sentence == null) return new HashMap<>();
         Map<String, Integer> counts = new HashMap<>();
-        String[] words = sentence.toLowerCase().split(" ");
+        String[] words = sentence.toLowerCase().split(' ');
         for (String word : words) {
             counts.put(word, counts.getOrDefault(word, 0) + 1);
         }
@@ -25,9 +26,10 @@ public class WordCounter {
     }
 
     public static void main(String[] args) {
-        String sentence = "the cat sat on the mat the cat";
+        String sentence = 'the cat sat on the mat the cat';
         Map<String, Integer> result = countWords(sentence);
-        System.out.println("Most frequent: " + mostFrequent(result));
+        System.out.println('Most frequent: ' + mostFrequent(result));
         System.out.println(countWords(null));
     }
 }
+"@, [System.Text.Encoding]::ASCII)
