@@ -1,0 +1,6 @@
+@"
+The quick brown fox jumps over the lazy dog.
+The dog barked at the fox. The fox ran away quickly.
+Learning to code is fun and rewarding. Code every day.
+Practice makes perfect. Keep coding and keep learning.
+"@ | Set-Content sample.txt -Encoding UTF8
