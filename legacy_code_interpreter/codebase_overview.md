@@ -1,50 +1,48 @@
-# Codebase Overview - Legacy Task Manager Application (jQuery + PHP)
+# Codebase Overview - Legacy Todo Application (TodoMVC - Backbone.js)
 
 ## Age
-First release in 2011, last major update in 2017. The jQuery and PHP stack used
-has not received significant architectural updates since then, making it effectively
-legacy by modern web development standards.
+First release in 2010, last major update in 2016. The Backbone.js framework itself
+has not received significant updates since 2016, making it effectively legacy by
+modern JavaScript standards.
 
 ## Size
-~4,100 LOC across PHP, JavaScript, HTML, and CSS files.
-- PHP: ~2,400 LOC
-- JavaScript: ~900 LOC
-- HTML templates: ~500 LOC
-- CSS: ~300 LOC
+~3,200 LOC across JavaScript, HTML, and CSS files.
+- JavaScript: ~2,100 LOC
+- HTML templates: ~400 LOC
+- CSS: ~700 LOC
 
 ## Dependencies
-- PHP 5.6 (end of life since December 2018, no longer receiving security updates)
-- jQuery 1.9.1 (outdated major version with known security vulnerabilities)
-- MySQL 5.5 (end of life since December 2018)
-- Bootstrap 2.3.2 (outdated major version, incompatible with modern browsers)
-- PDO with no query parameterization in several modules
+- Backbone.js 1.3.3 (no longer actively maintained)
+- Underscore.js 1.8.3 (utility library, mostly replaced by native ES6+ methods)
+- jQuery 1.11.1 (outdated major version with known security vulnerabilities)
+- RequireJS 2.1.10 (module loader, replaced by ES6 native modules and bundlers)
+- localStorage API (no server-side persistence layer)
 
 ## Known Issues and Pain Points
 
 ### Architecture
-- No MVC pattern; business logic mixed directly inside HTML template files
-- No separation of concerns between database queries and presentation layer
-- Global variables used extensively for state management across pages
+- Tightly coupled Views and Models with no clear separation of concerns
+- No component-based architecture; entire UI rebuilt on every model change
+- Global state management through Backbone events is difficult to trace and debug
 
 ### Code Quality
-- No automated tests of any kind (unit, integration, or end-to-end)
-- Inconsistent coding style mixing procedural PHP and early OOP patterns
-- Heavy reliance on jQuery for all DOM manipulation instead of modern APIs
-- Callback-based async patterns with no use of Promises or async/await
+- No automated tests (unit, integration, or end-to-end)
+- Inconsistent coding style mixing ES5 and early ES6 patterns
+- Heavy reliance on jQuery for DOM manipulation instead of modern APIs
+- Callback-based async patterns instead of Promises or async/await
 
 ### Security
-- jQuery 1.9.1 contains known XSS vulnerabilities
-- Several SQL queries use string concatenation instead of prepared statements
-- No input sanitization on user-submitted task fields
-- Passwords stored using MD5 hashing instead of bcrypt or Argon2
+- jQuery 1.11.1 contains known XSS vulnerabilities (CVE-2015-9251)
+- No input sanitization on user-submitted todo items
+- No Content Security Policy (CSP) headers configured
 
 ### Performance
-- Full page reload triggered on every form submission with no AJAX fallback
-- No caching layer; every request hits the database directly
-- All CSS and JavaScript files loaded synchronously without minification
+- Full DOM re-render triggered on every minor model update
+- No lazy loading or code splitting
+- All dependencies loaded synchronously, increasing initial page load time
 
 ### Maintainability
 - No TypeScript or type annotations; runtime errors are hard to catch early
 - Documentation is minimal and outdated
-- No linting or formatting tools configured
-- Build tooling relies on manual FTP deployment with no CI/CD pipeline
+- No linting or formatting tools configured (no ESLint, Prettier)
+- Build tooling relies on outdated Grunt tasks with no modern bundler (Webpack/Vite)
