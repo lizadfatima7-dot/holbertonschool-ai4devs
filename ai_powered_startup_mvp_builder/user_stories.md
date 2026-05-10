@@ -8,5 +8,3 @@
 6. As a developer, I want to choose Python as the output language so that it aligns with my existing tech stack.
 7. As a user, I want to preview core features before exporting so that I can make quick adjustments.
 8. As a researcher, I want to save multiple versions of my concept so that I can compare different business models.
-9. As a user, I want to receive suggested tech stacks so that I can make informed infrastructure decisions.
-10. As a founder, I want to use a simple dashboard so that I can keep my projects organized.
