@@ -7,3 +7,4 @@ async function getUserNames(url) {
 
 const result = getUserNames("https://jsonplaceholder.typicode.com/users");
 console.log("Names:", result);
+console.log("Fetching user names...");
