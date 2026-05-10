@@ -1,24 +1,25 @@
 # Bug Descriptions
 
 ## bug1.py
-- **Intended Behavior**: The function get_last_n accepts a list and integer n and returns a new list containing only the last n elements.
-- **Current Issue**: Off-by-one error. The loop uses range(start, len(items)+1) causing IndexError when accessing items[len(items)].
+- **Intended Behavior**: The function get_last_n accepts a list of elements and a positive integer n as parameters. It should create and return a new list containing only the last n elements of the original list, preserving their original order. For example, given the list [10, 20, 30, 40, 50] and n=3, the function should return [30, 40, 50].
+- **Current Issue**: Off-by-one error. The loop iterates using range(start, len(items)+1) which causes the loop to access items[len(items)] on the final iteration. Since valid indices end at len(items)-1, this raises an IndexError. Fix by replacing len(items)+1 with len(items).
 
 ## bug2.py
-- **Intended Behavior**: The function factorial accepts a non-negative integer n and returns the product of all positive integers from 1 to n.
-- **Current Issue**: Logical error. result is initialized to 0 instead of 1. Loop uses range(1, n) excluding n. No base case for n equals 0.
+- **Intended Behavior**: The function factorial accepts a non-negative integer n and returns the factorial of that number, which is the product of all positive integers from 1 to n. For example, factorial(5) should return 120 and factorial(0) should return 1 by mathematical convention.
+- **Current Issue**: Logical error. The variable result is initialized to 0 instead of 1, which means every multiplication in the loop produces 0. The loop uses range(1, n) which excludes n itself from the product. There is also no handling for the edge case where n equals 0. Fix by setting result=1, changing range(1, n) to range(1, n+1), and returning 1 when n equals 0.
 
 ## bug3.js
-- **Intended Behavior**: The function average accepts an array, filters non-numeric values, and returns the arithmetic mean rounded to 2 decimal places as a number.
-- **Current Issue**: typeof NaN returns number so NaN passes filter. reduce has no initial value causing TypeError. toFixed returns a string not a number.
+- **Intended Behavior**: The function average accepts an array that may contain mixed value types. It should filter out all non-numeric values including NaN, compute the arithmetic mean of the remaining valid numbers, and return that mean rounded to 2 decimal places as a numeric value not a string. For example, given [1, 2, 3, 4, 5] the function should return the number 3.
+- **Current Issue**: Off-by-one error and type issues. The filter uses typeof n === "number" which incorrectly allows NaN to pass because typeof NaN returns "number" in JavaScript. The reduce call has no initial accumulator value which causes a TypeError when the filtered array is empty. The toFixed method returns a string representation rather than a numeric value. Fix by adding Number.isNaN(n) to the filter, passing 0 as initial value to reduce, and wrapping the result with parseFloat.
 
 ## bug4.js
-- **Intended Behavior**: The async function getUserNames accepts a URL, fetches an array of user objects, and returns each user name converted to uppercase.
-- **Current Issue**: fetch and response.json are not awaited so both return Promises instead of resolved values.
+- **Intended Behavior**: The asynchronous function getUserNames accepts a URL string as a parameter. It should send an HTTP GET request to that URL, parse the JSON response body into a JavaScript array of user objects, and return a new array containing each user name property converted to uppercase. For example, given a URL that returns [{name: "Alice"}, {name: "Bob"}] the function should return ["ALICE", "BOB"].
+- **Current Issue**: Misuse of async/await. The fetch function returns a Promise but the await keyword is missing before the call. Similarly response.json() returns a Promise but await is also missing. As a result the variable data holds an unresolved Promise object and calling map on it throws a TypeError. Fix by adding await before fetch(url) and await before response.json().
 
 ## bug5.java
-- **Intended Behavior**: countWords accepts a sentence and returns a HashMap of word frequencies. mostFrequent returns the word with highest count.
-- **Current Issue**: Null input throws NullPointerException. HashMap.get returns null for unseen words causing NullPointerException on increment.
+- **Intended Behavior**: The static method countWords accepts a sentence string and returns a HashMap where each key is a word from the sentence and each value is the number of times that word appears. The static method mostFrequent accepts that HashMap and returns the word with the highest frequency count. For example, given the sentence "the cat sat on the mat the cat" countWords should return {the=3, cat=2, sat=1, on=1, mat=1} and mostFrequent should return "the".
+- **Current Issue**: Runtime exception. When a null value is passed to countWords, calling sentence.toLowerCase().split() immediately throws a NullPointerException. Inside the loop, counts.get(word) returns null for any word not yet in the map, and adding 1 to null throws a NullPointerException. Fix by adding a null check at the start of countWords and replacing counts.get(word) with counts.getOrDefault(word, 0)+1.
+
 ## bug6.py
-- **Intended Behavior**: The function process_scores reads a CSV file where each row contains a student name followed by numeric scores, computes the average score per student, and writes the results to a new CSV file with Name and Average columns.
-- **Current Issue**: CSV values are read as strings so passing them to sum raises TypeError. Files are opened without with blocks causing resource leaks if an exception occurs.
+- **Intended Behavior**: The function process_scores accepts an input CSV file path and an output CSV file path. Each row of the input file contains a student name followed by one or more numeric scores. The function should compute the average score for each student and write the results to the output CSV file with two columns named Name and Average. For example, given an input row Alice,85,90,78 the corresponding output row should be Alice,84.33.
+- **Current Issue**: Misuse of data types and resource management. The csv.reader returns all values as strings, so passing the scores list directly to sum raises a TypeError because Python cannot add string values arithmetically. Additionally both the input and output files are opened using plain open calls without with statements, which means file handles are not guaranteed to close properly if an exception occurs. Fix by converting each score to float using float() before summing, and wrapping both open calls in with statements.
