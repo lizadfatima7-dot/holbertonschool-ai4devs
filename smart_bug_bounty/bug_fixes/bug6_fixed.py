@@ -1,5 +1,6 @@
 import csv
 def process_scores(input_file, output_file):
+    # 'with' bloku və float çevirməsi tətbiq edildi
     with open(input_file, 'r') as f, open(output_file, 'w', newline='') as out:
         reader = csv.reader(f)
         writer = csv.writer(out)
