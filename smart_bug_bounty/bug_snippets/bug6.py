@@ -1,8 +1,7 @@
-python -c "
-content = '''import csv
+import csv
 
 def process_scores(input_path, output_path):
-    infile = open(input_path, \"r\")
+    infile = open(input_path, "r")
     reader = csv.reader(infile)
     results = []
     for row in reader:
@@ -11,15 +10,10 @@ def process_scores(input_path, output_path):
         average = sum(scores) / len(scores)
         results.append([name, average])
     infile.close()
-    outfile = open(output_path, \"w\")
+    outfile = open(output_path, "w")
     writer = csv.writer(outfile)
-    writer.writerow([\"Name\", \"Average\"])
+    writer.writerow(["Name", "Average"])
     for result in results:
         writer.writerow(result)
 
-process_scores(\"scores.csv\", \"averages.csv\")
-'''
-with open(r'C:\Users\Fatima\OneDrive\Desktop\bug_descriptions.md\smart_bug_bounty\bug_snippets\bug6.py', 'w') as f:
-    f.write(content)
-print('Done')
-"
+process_scores("scores.csv", "averages.csv")

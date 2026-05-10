@@ -1,5 +1,4 @@
-python -c "
-content = '''# Bug Descriptions
+# Bug Descriptions
 
 ## bug1.py
 - **Intended Behavior**: The function get_last_n accepts a list and integer n and returns a new list containing only the last n elements.
@@ -24,8 +23,3 @@ content = '''# Bug Descriptions
 ## bug6.py
 - **Intended Behavior**: process_scores reads a CSV of student names and scores, computes each average, and writes results to a new CSV with Name and Average columns.
 - **Current Issue**: CSV values are strings so sum raises TypeError. Files opened without with blocks cause resource leaks.
-'''
-with open(r'C:\Users\Fatima\OneDrive\Desktop\bug_descriptions.md\smart_bug_bounty\bug_snippets\bug_descriptions.md', 'w', encoding='utf-8') as f:
-    f.write(content)
-print('Done')
-"
