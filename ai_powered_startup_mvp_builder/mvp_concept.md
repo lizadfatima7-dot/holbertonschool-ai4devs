@@ -12,8 +12,7 @@ Early-stage founders often spend too much time and resources building initial pr
 - **Business Logic Scaffolder**: Automatically generates core back-end logic based on user-provided business rules.
 - **Database Schema Generator**: Creates a normalized SQL or NoSQL schema structure from functional requirements.
 - **API Documentation Auto-gen**: Produces Swagger/OpenAPI documentation for all generated endpoints.
-- **Exportable Codebase**: Allows users to download the full source code in Python or Node.js.
-- **Interactive Feedback Loop**: A chat interface to refine the generated features in real-time.
+- **Exportable Codebase**: Allows users to download the full source code in Python for local development.
 
 ## Constraints
 - The MVP version will support only one programming language (Python).
