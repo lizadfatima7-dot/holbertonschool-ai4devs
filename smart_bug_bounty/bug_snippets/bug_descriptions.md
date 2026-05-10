@@ -19,10 +19,6 @@
 ## bug5.java
 - **Intended Behavior**: countWords accepts a sentence and returns a HashMap of word frequencies. mostFrequent returns the word with highest count.
 - **Current Issue**: Null input throws NullPointerException. HashMap.get returns null for unseen words causing NullPointerException on increment.
-
-## bug6.py
-- **Intended Behavior**: process_scores reads a CSV of student names and scores, computes each average, and writes results to a new CSV with Name and Average columns.
-- **Current Issue**: CSV values are strings so sum raises TypeError. Files opened without with blocks cause resource leaks.
 ## bug6.py
 - **Intended Behavior**: The function process_scores reads a CSV file where each row contains a student name followed by numeric scores, computes the average score per student, and writes the results to a new CSV file with Name and Average columns.
 - **Current Issue**: CSV values are read as strings so passing them to sum raises TypeError. Files are opened without with blocks causing resource leaks if an exception occurs.
